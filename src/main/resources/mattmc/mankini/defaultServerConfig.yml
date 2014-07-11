@@ -1,0 +1,8 @@
+##Default Server Config
+nick: <nick>
+OAuth: <authkey>
+
+autoJoinChannel: <channel>
+
+serverHost: irc.twitch.tv
+serverPort: 6667
