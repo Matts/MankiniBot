@@ -12,21 +12,17 @@ import java.util.ArrayList;
 public class ModUtils {
     public static ArrayList<String> moderators = new ArrayList<String>();
 
-    Thread thread = new Thread("ModUtils"){
+    public static Thread updateMods = new Thread("ModUtils"){
         @Override
         public void run() {
+            while(true){
             try {
-                try {
-                    updateModerators();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Thread.sleep(180);
-            } catch (InterruptedException e) {
+                updateModerators();
+                updateMods.sleep(300000);
+            } catch (Exception e) {
                 e.printStackTrace();
-            }
         }
-    };
+    }}};
 
     public static void updateModerators() throws Exception {
         moderators.clear();

@@ -114,6 +114,8 @@ public class MankiniBot {
                 .addListener(new ModuleMinecraft())
                 .addListener(new ModuleKinis())
                 .addListener(new ModuleQuote())
+                .addListener(new ModuleRegular())
+                .addListener(new ModuleSendMessages())
 
                 .buildConfiguration();
 

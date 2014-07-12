@@ -5,6 +5,7 @@ import mattmc.mankini.MankiniBot;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.ModUtils;
 import mattmc.mankini.utils.SQLiteListener;
+import mattmc.mankini.utils.StreamingUtils;
 import org.apache.commons.io.FileUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
@@ -15,8 +16,12 @@ import org.pircbotx.hooks.events.MessageEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Project Mankini
@@ -24,41 +29,46 @@ import java.util.List;
  */
 public class ModuleKinis extends SQLiteListener {
     String db = "database\\kinis.db";
-    private boolean isKiniOn = true;
 
-    MessageEvent<PircBotX> events;
+    public MessageEvent<PircBotX> events;
 
     public ModuleKinis(){
         setupDB();
     }
-
-    Thread kinis = new Thread(){
+    public static ModuleKinis instance = new ModuleKinis();
+    public Thread kinis = new Thread(){
         public void run(){
-            while(isKiniOn){
+            while(true){
+                if(StreamingUtils.isStreaming){
                 try {
-                    Thread.sleep(300000);
+                    System.out.println("start timer");
+                    kinis.sleep(15000);
                     autoTickAddKikis(events);
-                } catch (InterruptedException e) {
+                    } catch (Exception e){
                     e.printStackTrace();
+                    }
+
                 }
             }
         }
     };
 
-    private void autoTickAddKikis(MessageEvent<PircBotX> event) {
-        ImmutableSortedSet set = event.getChannel().getUsers();
+    public void autoTickAddKikis(MessageEvent<PircBotX> event) {
+        System.out.println(event);
+            ImmutableSortedSet set = event.getChannel().getUsers();
             List<User> list = set.asList();
 
             int i = 0;
             while(set.iterator().hasNext()){
                 try {
+                    System.out.println(list.get(i).getNick());
                     addKinis(list.get(i).getNick(), 1);
+                    i++;
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } catch (IndexOutOfBoundsException ex){
-
-                }finally {
-                    i++;
+                    ex.printStackTrace();
+                    break;
                 }
             }
         }
@@ -182,12 +192,14 @@ public class ModuleKinis extends SQLiteListener {
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String msg = event.getMessage().split(" ")[0];
-        this.events = event;
-
-        if(kinis.getState().equals(Thread.State.NEW)){
-            event.getChannel().send().message(Strings.autoKinisStarted);
-            kinis.start();
+        if(msg.equals("!test")){
+        this.events=event;
+        if(ModuleKinis.instance.kinis.getState().equals(Thread.State.NEW)){
+        kinis.start();
         }
+        }
+
+
 
         if(msg.equalsIgnoreCase("!kinis")){
             if(userExists(event.getUser().getNick())){

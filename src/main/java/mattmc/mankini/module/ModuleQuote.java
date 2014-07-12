@@ -23,7 +23,7 @@ public class ModuleQuote extends ListenerAdapter<PircBotX> {
 
         String command = event.getMessage().split(" ")[0];
         if(command.equalsIgnoreCase("!quote")){
-            if(ModUtils.moderators.contains(event.getUser().getNick())||event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+            if(ModUtils.moderators.contains(event.getUser().getNick())||event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner) || (boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), event.getUser().getNick())){
             pickRandomQuote(event);
             }
         }
@@ -34,7 +34,6 @@ public class ModuleQuote extends ListenerAdapter<PircBotX> {
         }
         if(command.equalsIgnoreCase("!removequote")){
             event.respond("Please ask the streamer to manually remove the command, Java doesn't give a way to find and remove a line from a text document :/");
-            removeQuote(event.getMessage().substring(10, event.getMessage().length()));
         }
     }
 
@@ -51,10 +50,6 @@ public class ModuleQuote extends ListenerAdapter<PircBotX> {
         bw.close();
 
         event.respond("Quote Added!");
-    }
-
-    private void removeQuote(String content) throws IOException {
-        FileUtils.readLines(file).remove(1);
     }
 
     private void pickRandomQuote(MessageEvent<PircBotX> event) throws IOException {

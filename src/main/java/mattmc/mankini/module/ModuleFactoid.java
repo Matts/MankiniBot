@@ -25,23 +25,30 @@ public class ModuleFactoid extends SQLiteListener
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String command = event.getMessage().split(" ")[0];
         if(command.startsWith("?")){
-            try{
-            if(commandExists(event.getMessage().split(" ")[0].substring(1))){
+            if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
+                if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
+                    if(getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")){
+                        if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                            event.getChannel().send().message(getOutput(event.getMessage().split(" ")[0].substring(1)));
+                        }
+                    }
+                }else{
+                    if(ModUtils.moderators.contains(event.getUser().getNick()) || (boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                        event.getChannel().send().message(getOutput(event.getMessage().split(" ")[0].substring(1)));
+                    }
+                }
+            }else{
                 event.getChannel().send().message(getOutput(event.getMessage().split(" ")[0].substring(1)));
             }
-            }catch(SQLException e){
-                event.respond(Colors.RED + e.getMessage());
-            }
-
         }
 
         if(command.equalsIgnoreCase("^addcommand")){
             if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-            if(event.getMessage().length() >= 3){
+            if(event.getMessage().length() >= 4){
                 try{
                 if(!commandExists(event.getMessage().split(" ")[1])){
-                    int i = 12+event.getMessage().split(" ")[1].length()+1;
-                    addCommand(event.getMessage().split(" ")[1], event.getUser().getNick(), event.getMessage().substring(i));
+                    int i = event.getMessage().split(" ")[0].length()+event.getMessage().split(" ")[1].length()+event.getMessage().split(" ")[2].length()+3;
+                    addCommand(event.getMessage().split(" ")[1], event.getMessage().split(" ")[2], event.getUser().getNick(), event.getMessage().substring(i));
                     event.getChannel().send().message("Done!");
                 }else{
                     event.respond(Strings.alreadyExists);
@@ -49,6 +56,8 @@ public class ModuleFactoid extends SQLiteListener
                 }catch(SQLException e){
                     event.respond(Colors.RED + e.getMessage());
                 }
+            }else{
+                event.respond("Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>");
             }
         }else{
                 event.respond(Strings.NoPerms);
@@ -79,7 +88,7 @@ public class ModuleFactoid extends SQLiteListener
         try {
             openConnection(db);
             stmt = c.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS `FACTOIDS`(COMMAND CHAR(50), USER CHAR(50), OUTPUT CHAR(50)) ";
+            String sql = "CREATE TABLE IF NOT EXISTS `FACTOIDS`(COMMAND CHAR(50), USER CHAR(50), OUTPUT CHAR(50), PERM CHAR(50)) ";
             stmt.executeUpdate(sql);
             stmt.close();
             closeConnection();
@@ -117,14 +126,14 @@ public class ModuleFactoid extends SQLiteListener
         return command;
     }
 
-    public String getOwner(String command) throws SQLException {
-        openConnection(db);
+    public String getPermission(String command) throws SQLException {
         if(commandExists(command)){
-        String result;
-        String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
+            String result;
+            openConnection(db);
+            String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, command.toLowerCase());
-            result = preparedStatement.executeQuery().getString("USER");
+            result = preparedStatement.executeQuery().getString("PERM");
             closeConnection();
             return result;
         }
@@ -147,13 +156,14 @@ public class ModuleFactoid extends SQLiteListener
         return true;
     }
 
-    public void addCommand(String command, String user, String output) throws SQLException {
+    public void addCommand(String s, String command, String user, String output) throws SQLException {
         openConnection(db);
-        String sql = "INSERT INTO `FACTOIDS` (COMMAND, USER, OUTPUT) VALUES(?,?,?)";
+        String sql = "INSERT INTO `FACTOIDS` (COMMAND, USER, OUTPUT, PERM) VALUES(?,?,?,?)";
             PreparedStatement statement = c.prepareStatement(sql);
             statement.setString(1, command.toLowerCase());
             statement.setString(2, user);
             statement.setString(3, output);
+            statement.setString(4, s);
             statement.executeUpdate();
         statement.close();
         closeConnection();

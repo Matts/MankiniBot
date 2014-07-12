@@ -33,3 +33,6 @@ strike1: 'Strike 1 - Warning - Dont Post Links!'
 strike2: 'Strike 2 - TempBan - Dont Post Links! -'
 bantimeOnMSG: 10M
 bantime: '600'
+
+sendMessage: Share the love and tweet to your friends, this really does help out runew0lf a lot - http://ctt.ec/5UcPZ
+sendMessageSleepTime: 1800

@@ -10,8 +10,8 @@ public class Strings {
     //String test = MankiniBot.strings.get("");
     public static String currentlyWatching = " " +(String) MankiniBot.strings.get("currentlyWatching")+ " ";
 
-    public static String alreadyExists = " " +(String) MankiniBot.strings.get("alreadyExists")+" ";
-    public static String successfullyRemoved = " " +(String) MankiniBot.strings.get("successfullyRemoved")+" ";
+    public static String alreadyExists = (String) MankiniBot.strings.get("alreadyExists")+" ";
+    public static String successfullyRemoved = (String) MankiniBot.strings.get("successfullyRemoved")+" ";
 
     public static String autoKinisStarted = " " +(String) MankiniBot.strings.get("autoKinisStarted")+" ";
     public static String totalKinis = " " +(String) MankiniBot.strings.get("totalKinis")+" ";
@@ -36,6 +36,9 @@ public class Strings {
     public static String strike2 = " " +(String) MankiniBot.strings.get("strike2")+" ";
     public static String bantime = " " +(String) MankiniBot.strings.get("bantime")+" ";
     public static String bantimeOnMSG = " " +(String) MankiniBot.strings.get("bantimeOnMSG")+" ";
+
+    public static String sendMessage = (String) MankiniBot.strings.get("sendMessage");
+    public static int sendMessageSleepTime = (int) MankiniBot.strings.get("sendMessageSleepTime");
 
 
 
