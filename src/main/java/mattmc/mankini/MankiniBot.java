@@ -2,7 +2,7 @@ package mattmc.mankini;
 
 
 import mattmc.mankini.commands.*;
-import mattmc.mankini.module.ModuleLinks;
+import mattmc.mankini.module.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class MankiniBot {
 
     static Yaml yaml = new Yaml();
 
-    public static String Owner = "MankiniBot_Beta";
+    public static String Owner = "mattsonmc";
 
     public static void main(String[] args){
         setupDefaultConfigs();
@@ -110,9 +110,10 @@ public class MankiniBot {
 
                 .addListener(new ModuleLinks())
 
-                .addListener(new CommandFactoid())
-                .addListener(new CommandMinecraft())
-                .addListener(new CommandKinis())
+                .addListener(new ModuleFactoid())
+                .addListener(new ModuleMinecraft())
+                .addListener(new ModuleKinis())
+                .addListener(new ModuleQuote())
 
                 .buildConfiguration();
 

@@ -44,6 +44,9 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
     if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updatemods")){
         ModUtils.updateModerators();
     }
+        if(event.getMessage().split(" ")[0].equals("!commands") || event.getMessage().split(" ")[0].equals("!help")){
+            event.respond("A List Of Commands Can Be Found Here: http://www.mattmc.info/bots/mankinibot/commands.txt");
+        }
     }
 
 

@@ -12,11 +12,29 @@ import java.util.ArrayList;
 public class ModUtils {
     public static ArrayList<String> moderators = new ArrayList<String>();
 
+    Thread thread = new Thread("ModUtils"){
+        @Override
+        public void run() {
+            try {
+                try {
+                    updateModerators();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Thread.sleep(180);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     public static void updateModerators() throws Exception {
+        moderators.clear();
         JSONObject json = new JSONObject(JSONParser.readUrl("http://tmi.twitch.tv/group/user/runew0lf/chatters"));
         for(int i = 0; i < json.length(); i++){
             JSONArray mods = json.getJSONObject("chatters").getJSONArray("moderators");
             for(int j = 0; j < mods.length(); j++){
+
                 moderators.add(mods.getString(j));
             }
         }

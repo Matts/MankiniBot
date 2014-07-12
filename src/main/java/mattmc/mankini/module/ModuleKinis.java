@@ -1,4 +1,4 @@
-package mattmc.mankini.commands;
+package mattmc.mankini.module;
 
 import com.google.common.collect.ImmutableSortedSet;
 import mattmc.mankini.MankiniBot;
@@ -18,13 +18,13 @@ import java.util.List;
  * Project Mankini
  * Created by MattsMc on 7/10/14.
  */
-public class CommandKinis extends SQLiteListener {
+public class ModuleKinis extends SQLiteListener {
     String db = "database\\kinis.db";
     private boolean isKiniOn = true;
 
     MessageEvent<PircBotX> events;
 
-    public CommandKinis(){
+    public ModuleKinis(){
         setupDB();
     }
 
@@ -32,15 +32,13 @@ public class CommandKinis extends SQLiteListener {
         public void run(){
             while(isKiniOn){
                 try {
-                    autoTickAddKikis(events);
                     Thread.sleep(300000);
-
+                    autoTickAddKikis(events);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
-
     };
 
     private void autoTickAddKikis(MessageEvent<PircBotX> event) {
@@ -185,11 +183,21 @@ public class CommandKinis extends SQLiteListener {
         }
 
         if(msg.equalsIgnoreCase("!kinis")){
-            event.respond(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+            if(userExists(event.getUser().getNick())){
+            event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+            }else{
+                addUser(event.getUser().getNick());
+                event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+            }
+
         }
         if(msg.equalsIgnoreCase("!getkinis")){
             if(event.getMessage().split(" ").length >= 2){
-                event.respond(event.getMessage().split(" ")[1] + Strings.has + getKinis(event.getMessage().split(" ")[1]) + Strings.totalKinis);
+                if(userExists(event.getMessage().split(" ")[1])){
+                    event.respond(event.getMessage().split(" ")[1] + Strings.has + getKinis(event.getMessage().split(" ")[1]) + Strings.totalKinis);
+                }else{
+                    addUser(event.getMessage().split(" ")[1]);
+                }
             }else{
                 event.respond(Strings.getKinisExplain);
             }
@@ -197,13 +205,19 @@ public class CommandKinis extends SQLiteListener {
         if(msg.equalsIgnoreCase("!addkinis")){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=3){
-                    addKinis(event.getMessage().split(" ")[1], Integer.parseInt(event.getMessage().split(" ")[2]));
-                    event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[1]);
+                    if(userExists(event.getMessage().split(" ")[1])){
+                        addKinis(event.getMessage().split(" ")[1], Integer.parseInt(event.getMessage().split(" ")[2]));
+                        event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[1]);
+                    }else{
+                        addUser(event.getMessage().split(" ")[1]);
+                        addKinis(event.getMessage().split(" ")[1], Integer.parseInt(event.getMessage().split(" ")[2]));
+                        event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[1]);
+                    }
                 }else{
                     event.respond(Strings.addKiniExplain);
                 }
             }else{
-                event.respond(Colors.RED + Strings.NoPerms);
+                event.respond(Strings.NoPerms);
             }
         }
         if(msg.equalsIgnoreCase("!removekinis")){
@@ -215,43 +229,51 @@ public class CommandKinis extends SQLiteListener {
                     event.respond(Strings.removeKinisExplain);
                 }
             }else{
-                event.respond(Colors.RED + Strings.NoPerms);
+                event.respond(Strings.NoPerms);
             }
         }
         if(msg.equalsIgnoreCase("!kiniall")){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=2){
                     allKini(Integer.parseInt(event.getMessage().split(" ")[1]));
-                    event.respond(Strings.everyoneGot + event.getMessage().split(" ")[2] + Strings.kinis);
+                    event.respond(Strings.everyoneGot + event.getMessage().split(" ")[1] + Strings.kinis);
                 }else{
                     event.respond(Strings.kiniAllExplain);
                 }
             }else{
-                event.respond(Colors.RED + Strings.NoPerms);
+                event.respond(Strings.NoPerms);
             }
         }
         if(msg.equalsIgnoreCase("!adduser")){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=2){
+                    if(!userExists(event.getMessage().split(" ")[1])){
                     addUser(event.getMessage().split(" ")[1]);
                     event.respond(event.getMessage().split(" ")[1] + Strings.haveBeenAdded);
+                    }else{
+                        event.respond("User Already Exists!");
+                    }
                 }else{
                     event.respond(Strings.addUserExplain);
                 }
             }else{
-                event.respond(Colors.RED + Strings.NoPerms);
+                event.respond(Strings.NoPerms);
             }
         }
         if(msg.equalsIgnoreCase("!removeuser")){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=2){
-                removeUser(event.getMessage().split(" ")[1]);
+                    if(!userExists(event.getMessage().split(" ")[1])){
+                    removeUser(event.getMessage().split(" ")[1]);
                     event.respond(event.getMessage().split(" ")[1] + Strings.haveBeenRemoved);
+                    }else{
+                        event.respond("User Doesn't Exist!");
+                    }
                 }else{
                     event.respond(Strings.removeUserExplain);
                 }
             }else{
-                event.respond(Colors.RED + Strings.NoPerms);
+                event.respond(Strings.NoPerms);
             }
         }
     }

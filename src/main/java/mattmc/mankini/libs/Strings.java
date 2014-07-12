@@ -28,7 +28,7 @@ public class Strings {
     public static String addUserExplain = " " +(String) MankiniBot.strings.get("addUserExplain")+" ";
     public static String removeUserExplain = " " +(String) MankiniBot.strings.get("removeUserExplain")+" ";
     public static String kinisBeenRemoved = " " +(String) MankiniBot.strings.get("kinisBeenRemoved")+" ";
-    public static String everyoneGot = " " +(String) MankiniBot.strings.get("everyoneGot")+" ";
+    public static String everyoneGot = (String) MankiniBot.strings.get("everyoneGot")+" ";
     public static String NoPerms = " " +(String) MankiniBot.strings.get("NoPerms")+" ";
 
     public static String hasBeenPermitted = " " +(String) MankiniBot.strings.get("hasBeenPermitted")+" ";

@@ -1,4 +1,4 @@
-package mattmc.mankini.commands;
+package mattmc.mankini.module;
 
 import mattmc.mankini.MankiniBot;
 import mattmc.mankini.libs.Strings;
@@ -14,10 +14,10 @@ import java.sql.*;
  * Project MrBot
  * Created by MattsMc on 6/1/14.
  */
-public class CommandFactoid extends SQLiteListener
+public class ModuleFactoid extends SQLiteListener
 {
     String db = "database\\factoid.db";
-    public CommandFactoid(){
+    public ModuleFactoid(){
         setupDB();
     }
 
@@ -42,7 +42,7 @@ public class CommandFactoid extends SQLiteListener
                 if(!commandExists(event.getMessage().split(" ")[1])){
                     int i = 12+event.getMessage().split(" ")[1].length()+1;
                     addCommand(event.getMessage().split(" ")[1], event.getUser().getNick(), event.getMessage().substring(i));
-                    event.getUser().send().notice("Done!");
+                    event.getChannel().send().message("Done!");
                 }else{
                     event.respond(Strings.alreadyExists);
                 }
@@ -50,7 +50,9 @@ public class CommandFactoid extends SQLiteListener
                     event.respond(Colors.RED + e.getMessage());
                 }
             }
-        }
+        }else{
+                event.respond(Strings.NoPerms);
+            }
         }
         if(command.equalsIgnoreCase("^delcommand")){
             if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
@@ -58,13 +60,15 @@ public class CommandFactoid extends SQLiteListener
                 try{
                     if(commandExists(event.getMessage().split(" ")[1])){
                         removeCommand(event.getMessage().split(" ")[1]);
-                        event.getUser().send().notice(Strings.successfullyRemoved);
+                        event.getChannel().send().message(Strings.successfullyRemoved);
                     }
                 }catch(SQLException e){
                     event.respond(Colors.RED + e.getMessage());
                 }
             }
-        }
+        }else{
+                event.respond(Strings.NoPerms);
+            }
         }
     }
 
@@ -101,30 +105,30 @@ public class CommandFactoid extends SQLiteListener
 
     public String getOutput(String command) throws SQLException {
         if(commandExists(command)){
-        ResultSet result;
+        String result;
         openConnection(db);
         String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, command.toLowerCase());
-            result = preparedStatement.executeQuery();
-            return result.getString("OUTPUT");
+            result = preparedStatement.executeQuery().getString("OUTPUT");
+            closeConnection();
+            return result;
         }
-        closeConnection();
-        return null;
+        return command;
     }
 
     public String getOwner(String command) throws SQLException {
         openConnection(db);
         if(commandExists(command)){
-        ResultSet result;
+        String result;
         String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, command.toLowerCase());
-            result = preparedStatement.executeQuery();
-            return result.getString("USER");
+            result = preparedStatement.executeQuery().getString("USER");
+            closeConnection();
+            return result;
         }
-        closeConnection();
-        return null;
+        return command;
     }
 
     private boolean commandExists(String command) throws SQLException {
@@ -141,7 +145,6 @@ public class CommandFactoid extends SQLiteListener
             preparedStatement.close();
             closeConnection();
         return true;
-
     }
 
     public void addCommand(String command, String user, String output) throws SQLException {
@@ -152,6 +155,8 @@ public class CommandFactoid extends SQLiteListener
             statement.setString(2, user);
             statement.setString(3, output);
             statement.executeUpdate();
+        statement.close();
+        closeConnection();
     }
 
     public void removeCommand(String command) throws SQLException {
@@ -160,6 +165,7 @@ public class CommandFactoid extends SQLiteListener
             PreparedStatement statement = c.prepareStatement(sql);
             statement.setString(1, command.toLowerCase());
             statement.executeUpdate();
+            statement.close();
             closeConnection();
     }
 }
