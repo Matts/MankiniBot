@@ -2,3 +2,5 @@
 config/
 database/
 target/
+*.log
+*.logs
