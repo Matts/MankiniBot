@@ -29,7 +29,8 @@ public class ModuleLinks extends ListenerAdapter<PircBotX> {
 
         if(event.getMessage().contains("http") || event.getMessage().contains("www.") || event.getMessage().contains(".com") || event.getMessage().contains(".net") || event.getMessage().contains(".co") || event.getMessage().contains(".co.uk")){
             if(!permitted.contains(event.getUser().getNick())){
-                if(!ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                if(!(ModUtils.moderators.contains(event.getUser().getNick()))){
+                    if(!(MankiniBot.Owner.contains(event.getUser().getNick()))){
                 if(!strike1.contains(event.getUser().getNick())){
                     event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName() +" :.timeout "+ event.getUser().getNick() + " 5");
                     event.respond(Strings.strike1);
@@ -38,6 +39,7 @@ public class ModuleLinks extends ListenerAdapter<PircBotX> {
                     event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName() +" :.timeout "+ event.getUser().getNick() + Strings.bantime);
                     event.respond(Strings.strike2 + Strings.bantimeOnMSG);
                     strike1.remove(event.getUser().getNick());
+                }
                 }
                 }
             }else{
