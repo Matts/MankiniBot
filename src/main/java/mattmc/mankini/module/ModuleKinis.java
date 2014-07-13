@@ -6,7 +6,9 @@ import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.ModUtils;
 import mattmc.mankini.utils.SQLiteListener;
 import mattmc.mankini.utils.StreamingUtils;
+import mattmc.mankini.utils.ViewerUtils;
 import org.apache.commons.io.FileUtils;
+import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
@@ -29,49 +31,41 @@ import java.util.TimerTask;
  */
 public class ModuleKinis extends SQLiteListener {
     String db = "database\\kinis.db";
-
-    public MessageEvent<PircBotX> events;
-
-    public ModuleKinis(){
-        setupDB();
-    }
-    public static ModuleKinis instance = new ModuleKinis();
+ boolean isLocked=false;
     public Thread kinis = new Thread(){
         public void run(){
             while(true){
-                if(StreamingUtils.isStreaming){
-                try {
-                    System.out.println("start timer");
-                    kinis.sleep(15000);
-                    autoTickAddKikis(events);
+
+                    try {
+                        kinis.sleep(300000);
+                        autoTickAddKikis();
                     } catch (Exception e){
-                    e.printStackTrace();
+                        e.printStackTrace();
                     }
 
-                }
+
             }
         }
     };
 
-    public void autoTickAddKikis(MessageEvent<PircBotX> event) {
-        System.out.println(event);
-            ImmutableSortedSet set = event.getChannel().getUsers();
-            List<User> list = set.asList();
+    public ModuleKinis(){
+        setupDB();
+        if(kinis.getState().equals(Thread.State.NEW)){
+                kinis.start();
+        }
+    }
+    public static ModuleKinis instance = new ModuleKinis();
 
-            int i = 0;
-            while(set.iterator().hasNext()){
-                try {
-                    System.out.println(list.get(i).getNick());
-                    addKinis(list.get(i).getNick(), 1);
-                    i++;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (IndexOutOfBoundsException ex){
-                    ex.printStackTrace();
-                    break;
-                }
+
+    public void autoTickAddKikis() {
+        for(int i = 0; i<ViewerUtils.viewers.size();i++){
+            try {
+                addKinis(ViewerUtils.viewers.get(i), 1);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+    }
 
     @Override
     public void setupDB() {
@@ -79,7 +73,7 @@ public class ModuleKinis extends SQLiteListener {
         try {
             openConnection(db);
             stmt = c.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS `KINIS`(USER CHAR(50), AMOUNT CHAR(50));";
+            String sql = "CREATE TABLE IF NOT EXISTS `KINIS`(USER CHAR(50), AMOUNT INT);";
             stmt.executeUpdate(sql);
             stmt.close();
         } catch (SQLException e) {
@@ -89,12 +83,31 @@ public class ModuleKinis extends SQLiteListener {
         }
     }
 
+    public String getTop3(MessageEvent<PircBotX> event) throws SQLException {
+        openConnection(db);
+        String sql = "SELECT * FROM 'KINIS' ORDER BY AMOUNT DESC LIMIT 5";
+        PreparedStatement statement = c.prepareStatement(sql);
+        ResultSet set = statement.executeQuery();
+        set.next();
+        event.respond("1: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        set.next();
+        event.respond("2: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        set.next();
+        event.respond("3: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        set.next();
+        event.respond("4: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        set.next();
+        event.respond("5: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        closeConnection();
+        return null;
+    }
+
     public void addUser(String user) throws SQLException {
         openConnection(db);
         String sql = "INSERT INTO `KINIS`(USER, AMOUNT) VALUES(?,?)";
         PreparedStatement statement = c.prepareStatement(sql);
         statement.setString(1, user.toLowerCase());
-        statement.setString(2, "1");
+        statement.setInt(2, 1);
         statement.executeUpdate();
         statement.close();
         closeConnection();
@@ -113,12 +126,12 @@ public class ModuleKinis extends SQLiteListener {
 
     public void removeKinis(String user, int amount) throws SQLException {
         if(userExists(user)){
-            int oldAmount = Integer.parseInt(getKinis(user.toLowerCase()));
+            int oldAmount = getKinis(user.toLowerCase());
             int newAmount = oldAmount-amount;
             openConnection(db);
             String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
             PreparedStatement statement = c.prepareStatement(sql);
-        statement.setString(1, newAmount+"");
+        statement.setInt(1, newAmount);
             statement.setString(2, user.toLowerCase());
             statement.executeUpdate();
             closeConnection();
@@ -127,12 +140,12 @@ public class ModuleKinis extends SQLiteListener {
 
     public void addKinis(String user, int amount) throws SQLException {
         if(userExists(user)){
-        int oldAmount = Integer.parseInt(getKinis(user.toLowerCase()));
+        int oldAmount = getKinis(user.toLowerCase());
         int newAmount = oldAmount+amount;
         openConnection(db);
         String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
         PreparedStatement statement = c.prepareStatement(sql);
-        statement.setString(1, newAmount+"");
+        statement.setInt(1, newAmount);
         statement.setString(2, user.toLowerCase());
         statement.executeUpdate();
         closeConnection();
@@ -158,15 +171,15 @@ public class ModuleKinis extends SQLiteListener {
         return true;
     }
 
-    public String getKinis(String user) throws SQLException {
-        String resulty = "-1";
+    public int getKinis(String user) throws SQLException {
+        int resulty = -1;
             openConnection(db);
             ResultSet result;
             String sql = "SELECT * FROM `KINIS` WHERE `USER`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, user.toLowerCase());
             result = preparedStatement.executeQuery();
-           resulty = result.getString("AMOUNT");
+           resulty = result.getInt("AMOUNT");
            closeConnection();
            result.close();
            preparedStatement.close();
@@ -177,7 +190,7 @@ public class ModuleKinis extends SQLiteListener {
         openConnection(db);
         String sql = "UPDATE `KINIS` SET `AMOUNT`=AMOUNT+?";
         PreparedStatement statement = c.prepareStatement(sql);
-        statement.setString(1, amount+"");
+        statement.setInt(1, amount);
         statement.executeUpdate();
         closeConnection();
     }
@@ -188,29 +201,29 @@ public class ModuleKinis extends SQLiteListener {
             addUser(event.getUser().getNick().toLowerCase());
         }
     }
-
+public static boolean confirm=false;
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String msg = event.getMessage().split(" ")[0];
-        if(msg.equals("!test")){
-        this.events=event;
-        if(ModuleKinis.instance.kinis.getState().equals(Thread.State.NEW)){
-        kinis.start();
+        if(msg.equalsIgnoreCase("!kinirank")){
+            getTop3(event);
         }
-        }
-
-
 
         if(msg.equalsIgnoreCase("!kinis")){
-            if(userExists(event.getUser().getNick())){
-            event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+            if(!isLocked){
+                if(userExists(event.getUser().getNick())){
+                    event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+                }else{
+                    addUser(event.getUser().getNick());
+                    event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+                }
             }else{
-                addUser(event.getUser().getNick());
-                event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
             }
-
         }
+
         if(msg.equalsIgnoreCase("!getkinis")){
+            if(!isLocked){
             if(event.getMessage().split(" ").length >= 2){
                 if(userExists(event.getMessage().split(" ")[1])){
                     event.respond(event.getMessage().split(" ")[1] + Strings.has + getKinis(event.getMessage().split(" ")[1]) + Strings.totalKinis);
@@ -221,8 +234,12 @@ public class ModuleKinis extends SQLiteListener {
             }else{
                 event.respond(Strings.getKinisExplain);
             }
+            }else{
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+            }
         }
         if(msg.equalsIgnoreCase("!addkinis")){
+            if(!isLocked){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=3){
                     if(userExists(event.getMessage().split(" ")[1])){
@@ -239,8 +256,12 @@ public class ModuleKinis extends SQLiteListener {
             }else{
                 event.respond(Strings.NoPerms);
             }
+            }else{
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+            }
         }
         if(msg.equalsIgnoreCase("!removekinis")){
+            if(!isLocked){
             if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=3){
                     removeKinis(event.getMessage().split(" ")[1].toLowerCase(), Integer.parseInt(event.getMessage().split(" ")[2]));
@@ -251,8 +272,12 @@ public class ModuleKinis extends SQLiteListener {
             }else{
                 event.respond(Strings.NoPerms);
             }
+            }else{
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+            }
         }
         if(msg.equalsIgnoreCase("!kiniall")){
+            if(!isLocked){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=2){
                     allKini(Integer.parseInt(event.getMessage().split(" ")[1]));
@@ -263,8 +288,12 @@ public class ModuleKinis extends SQLiteListener {
             }else{
                 event.respond(Strings.NoPerms);
             }
+            }else{
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+            }
         }
         if(msg.equalsIgnoreCase("!adduser")){
+            if(!isLocked){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=2){
                     if(!userExists(event.getMessage().split(" ")[1])){
@@ -279,8 +308,12 @@ public class ModuleKinis extends SQLiteListener {
             }else{
                 event.respond(Strings.NoPerms);
             }
+            }else{
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+            }
         }
         if(msg.equalsIgnoreCase("!removeuser")){
+            if(!isLocked){
             if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(event.getMessage().split(" ").length>=2){
                     if(userExists(event.getMessage().split(" ")[1])){
@@ -295,11 +328,19 @@ public class ModuleKinis extends SQLiteListener {
             }else{
                 event.respond(Strings.NoPerms);
             }
+            }else{
+                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+            }
         }
 
         if(msg.equalsIgnoreCase("!importkinisfromfile")){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-                event.respond("Kini Importing started.. Expect some bot lag!");
+            isLocked=true;
+            if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                event.respond("Kini Importing started.. All Kini Systems Locked!");
+                File dbfile = new File("database\\kinis.db");
+                dbfile.delete();
+                dbfile.createNewFile();
+                setupDB();
                 File file = new File(event.getMessage().split(" ")[1]);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 String line;
@@ -320,7 +361,7 @@ public class ModuleKinis extends SQLiteListener {
                         i++;
                     }
                     if(line.isEmpty()){
-                        if(!(Integer.parseInt(kinis) <= 30)){
+                        if(!(Integer.parseInt(kinis) <= 5)){
                             setUserAmount(user, Integer.parseInt(kinis));
                             i++;
                             continue;
@@ -328,7 +369,11 @@ public class ModuleKinis extends SQLiteListener {
                     }
                 }
             }
-        }
+            isLocked=false;
+            event.getChannel().send().message("The Writing Has Been Completed, All Systems Unlocked And Running!");
+
+            }
+
     }
     private void setUserAmount(String user, int kinis) {
         try {

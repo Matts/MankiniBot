@@ -1,28 +1,18 @@
 package mattmc.mankini.commands;
 
+import com.sun.xml.internal.ws.api.server.Module;
 import mattmc.mankini.MankiniBot;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.module.ModuleKinis;
 import mattmc.mankini.module.ModuleRegular;
-import mattmc.mankini.module.ModuleSendMessages;
 import mattmc.mankini.utils.JSONParser;
 import mattmc.mankini.utils.ModUtils;
 import mattmc.mankini.utils.StreamingUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
+import mattmc.mankini.utils.ViewerUtils;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.*;
-import sun.misc.IOUtils;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * Project MrBot
@@ -48,13 +38,16 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
         event.respond(json.get("chatter_count") + Strings.currentlyWatching);
         }
     }
-    if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updatemods")){
+    if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updateusers")){
         ModUtils.updateModerators();
     }
-        if(event.getMessage().split(" ")[0].equals("!commands") || event.getMessage().split(" ")[0].equals("!help")){
-            event.respond("A List Of Commands Can Be Found Here: http://pastebin.com/pwRCtNYx");
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updatemods")){
+            ViewerUtils.updateViewers();
         }
-        if(event.getMessage().split(" ")[0].equals("!togglestream")){
+        if(event.getMessage().split(" ")[0].equals("!commands") || event.getMessage().split(" ")[0].equals("!help")){
+            event.respond("A List Of Commands Can Be Found Here: http://www.mattmc.info/bots/mankinibot/commands.txt");
+        }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!togglestream")){
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(StreamingUtils.isStreaming==false){
                     event.getChannel().send().message("Runew0lf has started streaming!");
@@ -65,16 +58,18 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                     StreamingUtils.isStreaming=false;
                     StreamingUtils.manualOverride=false;
                 }
-                System.out.println(StreamingUtils.isOnline());
                 }
             }
-
+        if(ViewerUtils.updateViewers.getState().equals(Thread.State.NEW)){
+            ViewerUtils.updateViewers.start();
+        }
         if(ModUtils.updateMods.getState().equals(Thread.State.NEW)){
             ModUtils.updateMods.start();
         }
         if(StreamingUtils.checkIfOnline.getState().equals(Thread.State.NEW)){
             StreamingUtils.checkIfOnline.start();
         }
+
     }
 
 

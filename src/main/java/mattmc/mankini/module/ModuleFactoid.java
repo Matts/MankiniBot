@@ -25,20 +25,33 @@ public class ModuleFactoid extends SQLiteListener
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String command = event.getMessage().split(" ")[0];
         if(command.startsWith("?")){
+            String output = getOutput(event.getMessage().split(" ")[0].substring(1));
             if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
                 if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
                     if(getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")){
                         if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-                            event.getChannel().send().message(getOutput(event.getMessage().split(" ")[0].substring(1)));
+                            if(output.contains("%r")){
+                                String newString = output.replaceAll("%r", event.getMessage().split(" ")[1]);
+                                event.getChannel().send().message(newString);
+                            }
+                            event.getChannel().send().message(output);
                         }
                     }
                 }else{
                     if(ModUtils.moderators.contains(event.getUser().getNick()) || (boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-                        event.getChannel().send().message(getOutput(event.getMessage().split(" ")[0].substring(1)));
+                        if(output.contains("%r")){
+                            String newString = output.replaceAll("%r", event.getMessage().split(" ")[1]);
+                            event.getChannel().send().message(newString);
+                        }
+                        event.getChannel().send().message(output);
                     }
                 }
             }else{
-                event.getChannel().send().message(getOutput(event.getMessage().split(" ")[0].substring(1)));
+                if(output.contains("%r")){
+                    String newString = output.replaceAll("%r", event.getMessage().split(" ")[1]);
+                    event.getChannel().send().message(newString);
+                }
+                event.getChannel().send().message(output);
             }
         }
 
@@ -46,13 +59,13 @@ public class ModuleFactoid extends SQLiteListener
             if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
             if(event.getMessage().length() >= 4){
                 try{
-                if(!commandExists(event.getMessage().split(" ")[1])){
+               // if(!commandExists(event.getMessage().split(" ")[1])){
                     int i = event.getMessage().split(" ")[0].length()+event.getMessage().split(" ")[1].length()+event.getMessage().split(" ")[2].length()+3;
                     addCommand(event.getMessage().split(" ")[1], event.getMessage().split(" ")[2], event.getUser().getNick(), event.getMessage().substring(i));
                     event.getChannel().send().message("Done!");
-                }else{
-                    event.respond(Strings.alreadyExists);
-                }
+                //}else{
+                    //event.respond(Strings.alreadyExists);
+                //}
                 }catch(SQLException e){
                     event.respond(Colors.RED + e.getMessage());
                 }
