@@ -54,10 +54,9 @@ public class ModuleKinis extends SQLiteListener {
                 kinis.start();
         }
     }
-    public static ModuleKinis instance = new ModuleKinis();
-
 
     public void autoTickAddKikis() {
+        System.out.println("5 Min Kini :D");
         for(int i = 0; i<ViewerUtils.viewers.size();i++){
             try {
                 addKinis(ViewerUtils.viewers.get(i), 1);
@@ -85,19 +84,17 @@ public class ModuleKinis extends SQLiteListener {
 
     public String getTop3(MessageEvent<PircBotX> event) throws SQLException {
         openConnection(db);
-        String sql = "SELECT * FROM 'KINIS' ORDER BY AMOUNT DESC LIMIT 5";
+        String sql = "SELECT * FROM `KINIS` ORDER BY AMOUNT DESC LIMIT 3";
         PreparedStatement statement = c.prepareStatement(sql);
         ResultSet set = statement.executeQuery();
         set.next();
-        event.respond("1: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        String user1 = ("1: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
         set.next();
-        event.respond("2: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        String user2 = ("2: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
         set.next();
-        event.respond("3: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
-        set.next();
-        event.respond("4: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
-        set.next();
-        event.respond("5: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        String user3 = ("3: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
+        event.getChannel().send().message(user1 + "  --  " + user2 + "  --  " + user3);
+
         closeConnection();
         return null;
     }
@@ -179,7 +176,9 @@ public class ModuleKinis extends SQLiteListener {
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, user.toLowerCase());
             result = preparedStatement.executeQuery();
-           resulty = result.getInt("AMOUNT");
+            if(result.next()){
+                resulty = result.getInt("AMOUNT");
+            }
            closeConnection();
            result.close();
            preparedStatement.close();
@@ -338,8 +337,10 @@ public static boolean confirm=false;
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 event.respond("Kini Importing started.. All Kini Systems Locked!");
                 File dbfile = new File("database\\kinis.db");
-                dbfile.delete();
-                dbfile.createNewFile();
+                if((boolean) MankiniBot.conf.get("useSQLite")){
+                    dbfile.delete();
+                    dbfile.createNewFile();
+                }
                 setupDB();
                 File file = new File(event.getMessage().split(" ")[1]);
                 BufferedReader reader = new BufferedReader(new FileReader(file));

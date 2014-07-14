@@ -8,6 +8,7 @@ import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 
 /**
@@ -24,7 +25,7 @@ public class ModuleFactoid extends SQLiteListener
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String command = event.getMessage().split(" ")[0];
-        if(command.startsWith("?")){
+        if(command.startsWith("!")){
             String output = getOutput(event.getMessage().split(" ")[0].substring(1));
             if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
                 if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
@@ -110,45 +111,33 @@ public class ModuleFactoid extends SQLiteListener
         }
     }
 
-    @Override
-    public void openConnection(String db) {
-        try{
-            Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:" +db);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void closeConnection() {
-        super.closeConnection();
-    }
-
     public String getOutput(String command) throws SQLException {
         if(commandExists(command)){
-        String result;
+        ResultSet result;
         openConnection(db);
         String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, command.toLowerCase());
-            result = preparedStatement.executeQuery().getString("OUTPUT");
+            result = preparedStatement.executeQuery();
+            if(result.next())
+                return result.getString("OUTPUT");
             closeConnection();
-            return result;
         }
         return command;
     }
 
     public String getPermission(String command) throws SQLException {
         if(commandExists(command)){
-            String result;
+            ResultSet result;
             openConnection(db);
             String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, command.toLowerCase());
-            result = preparedStatement.executeQuery().getString("PERM");
+            result = preparedStatement.executeQuery();
+            if(result.next()){
+                return result.getString("PERM");
+            }
             closeConnection();
-            return result;
         }
         return command;
     }

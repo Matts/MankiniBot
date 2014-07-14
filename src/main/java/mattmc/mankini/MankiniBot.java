@@ -22,7 +22,7 @@ import java.util.Scanner;
 public class MankiniBot {
 
     public static Logger logger = LoggerFactory.getLogger(MankiniBot.class);
-    static Map<String, Object> conf = null;
+    public static Map<String, Object> conf = null;
     public static Map<String, Object> strings = null;
 
     static Yaml yaml = new Yaml();

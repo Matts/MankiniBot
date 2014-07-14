@@ -45,7 +45,7 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             ViewerUtils.updateViewers();
         }
         if(event.getMessage().split(" ")[0].equals("!commands") || event.getMessage().split(" ")[0].equals("!help")){
-            event.respond("A List Of Commands Can Be Found Here: http://www.mattmc.info/bots/mankinibot/commands.txt");
+            event.respond("A List Of Commands Can Be Found Here: http://mattmc.info/bots/mankinibot/");
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!togglestream")){
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
@@ -60,6 +60,19 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                 }
                 }
             }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot")){
+            event.getChannel().send().message("༼ つ◕_◕༽つ Mankini or Riot ༼ つ◕_◕༽つ");
+        }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot1")){
+            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                event.getChannel().send().message("༼ つ◕_◕༽つ " + event.getMessage().split(" ")[1]+" or Riot ༼ つ◕_◕༽つ");
+            }
+        }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!raid")){
+            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                event.getChannel().send().message("/me Thanks for watching! Be sure to follow if you enjoyed the stream. Hope to see you again later! Please go raid http://www.twitch.tv/"+event.getMessage().split(" ")[1]+" and say to them - Runew0lf's Mankini Raid!! ༼ つ◕_◕༽つ");
+            }
+        }
         if(ViewerUtils.updateViewers.getState().equals(Thread.State.NEW)){
             ViewerUtils.updateViewers.start();
         }

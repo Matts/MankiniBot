@@ -42,7 +42,7 @@ public class ModuleLinks extends ListenerAdapter<PircBotX> {
                     event.respond(Strings.strike2 + Strings.bantimeOnMSG);
                     strike1.remove(event.getUser().getNick());
                 }
-                }
+            }
                 }
                 }
             }else{
