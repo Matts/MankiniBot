@@ -1,9 +1,7 @@
 package mattmc.mankini.module;
 
 import mattmc.mankini.libs.Strings;
-import mattmc.mankini.utils.StreamingUtils;
 import org.pircbotx.PircBotX;
-import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 

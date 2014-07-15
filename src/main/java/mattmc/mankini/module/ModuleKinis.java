@@ -1,29 +1,15 @@
 package mattmc.mankini.module;
 
-import com.google.common.collect.ImmutableSortedSet;
 import mattmc.mankini.MankiniBot;
 import mattmc.mankini.libs.Strings;
-import mattmc.mankini.utils.ModUtils;
-import mattmc.mankini.utils.SQLiteListener;
-import mattmc.mankini.utils.StreamingUtils;
-import mattmc.mankini.utils.ViewerUtils;
-import org.apache.commons.io.FileUtils;
-import org.pircbotx.Channel;
-import org.pircbotx.Colors;
+import mattmc.mankini.utils.*;
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
-import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Project Mankini
@@ -32,18 +18,26 @@ import java.util.TimerTask;
 public class ModuleKinis extends SQLiteListener {
     String db = "database\\kinis.db";
  boolean isLocked=false;
+    boolean bool = false;
     public Thread kinis = new Thread(){
         public void run(){
             while(true){
-
+                bool=false;
+                while(StreamingUtils.isStreaming){
+                    System.out.println("Auto Kini's Started");
                     try {
                         kinis.sleep(300000);
                         autoTickAddKikis();
                     } catch (Exception e){
                         e.printStackTrace();
                     }
+                }
 
-
+                try {
+                    kinis.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
@@ -194,16 +188,14 @@ public class ModuleKinis extends SQLiteListener {
         closeConnection();
     }
 
-    @Override
-    public void onJoin(JoinEvent<PircBotX> event) throws Exception {
-        if(!userExists(event.getUser().getNick().toLowerCase())){
-            addUser(event.getUser().getNick().toLowerCase());
-        }
-    }
 public static boolean confirm=false;
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String msg = event.getMessage().split(" ")[0];
+        if(!userExists(event.getUser().getNick())){
+            addUser(event.getUser().getNick());
+        }
+
         if(msg.equalsIgnoreCase("!kinirank")){
             getTop3(event);
         }
@@ -239,7 +231,7 @@ public static boolean confirm=false;
         }
         if(msg.equalsIgnoreCase("!addkinis")){
             if(!isLocked){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 if(event.getMessage().split(" ").length>=3){
                     if(userExists(event.getMessage().split(" ")[1])){
                         addKinis(event.getMessage().split(" ")[1], Integer.parseInt(event.getMessage().split(" ")[2]));
@@ -261,7 +253,7 @@ public static boolean confirm=false;
         }
         if(msg.equalsIgnoreCase("!removekinis")){
             if(!isLocked){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 if(event.getMessage().split(" ").length>=3){
                     removeKinis(event.getMessage().split(" ")[1].toLowerCase(), Integer.parseInt(event.getMessage().split(" ")[2]));
                     event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenRemoved + event.getMessage().split(" ")[1].toLowerCase());
@@ -277,7 +269,7 @@ public static boolean confirm=false;
         }
         if(msg.equalsIgnoreCase("!kiniall")){
             if(!isLocked){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 if(event.getMessage().split(" ").length>=2){
                     allKini(Integer.parseInt(event.getMessage().split(" ")[1]));
                     event.respond(Strings.everyoneGot + event.getMessage().split(" ")[1] + Strings.kinis);
@@ -293,7 +285,7 @@ public static boolean confirm=false;
         }
         if(msg.equalsIgnoreCase("!adduser")){
             if(!isLocked){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 if(event.getMessage().split(" ").length>=2){
                     if(!userExists(event.getMessage().split(" ")[1])){
                     addUser(event.getMessage().split(" ")[1]);
@@ -313,7 +305,7 @@ public static boolean confirm=false;
         }
         if(msg.equalsIgnoreCase("!removeuser")){
             if(!isLocked){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 if(event.getMessage().split(" ").length>=2){
                     if(userExists(event.getMessage().split(" ")[1])){
                     removeUser(event.getMessage().split(" ")[1]);
@@ -337,7 +329,7 @@ public static boolean confirm=false;
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 event.respond("Kini Importing started.. All Kini Systems Locked!");
                 File dbfile = new File("database\\kinis.db");
-                if((boolean) MankiniBot.conf.get("useSQLite")){
+                if((boolean)MankiniBot.conf.get("useSQLite")){
                     dbfile.delete();
                     dbfile.createNewFile();
                 }

@@ -1,8 +1,15 @@
 ##Default Server Config
 nick: <nick>
-OAuth: <authkey>
+OAuth: <oauth>
 
-autoJoinChannel: <channel>
+autoJoinChannel: runew0lf
 
 serverHost: irc.twitch.tv
 serverPort: 6667
+
+useSQLite: false
+
+MySQLHost: localhost
+MySQLTable: mankinibot
+MySQLUserName: 
+MySQLPassword: 

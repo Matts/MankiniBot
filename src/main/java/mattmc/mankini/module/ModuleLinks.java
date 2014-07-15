@@ -3,11 +3,11 @@ package mattmc.mankini.module;
 import mattmc.mankini.MankiniBot;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.ModUtils;
+import mattmc.mankini.utils.Permissions;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -22,14 +22,14 @@ public class ModuleLinks extends ListenerAdapter<PircBotX> {
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!permit")){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 permitted.add(event.getMessage().split(" ")[1]);
                 event.respond(event.getUser().getNick() + Strings.hasBeenPermitted + event.getMessage().split(" ")[1]);
             }
         }
 
         if(event.getMessage().contains("http") || event.getMessage().contains("www.") || event.getMessage().contains(".com") || event.getMessage().contains(".net") || event.getMessage().contains(".co") || event.getMessage().contains(".co.uk")){
-            if(!(boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), event.getUser().getNick())){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
             if(!permitted.contains(event.getUser().getNick())){
                 if(!(ModUtils.moderators.contains(event.getUser().getNick()))){
                     if(!(MankiniBot.Owner.contains(event.getUser().getNick()))){

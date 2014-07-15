@@ -1,7 +1,6 @@
 package mattmc.mankini.module;
 
-import mattmc.mankini.MankiniBot;
-import mattmc.mankini.utils.ModUtils;
+import mattmc.mankini.utils.Permissions;
 import mattmc.mankini.utils.SQLiteListener;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -97,12 +96,12 @@ public class ModuleRegular extends SQLiteListener {
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String msg = event.getMessage().split(" ")[0];
         if(msg.equalsIgnoreCase("!reg")){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-            if(event.getMessage().split(" ")[1].equalsIgnoreCase("add")){
-                addRegular(event.getMessage().split(" ")[2], event);
-            }else if(event.getMessage().split(" ")[1].equalsIgnoreCase("del")){
-                removeRegular(event.getMessage().split(" ")[2], event);
-            }
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(event.getMessage().split(" ")[1].equalsIgnoreCase("add")){
+                    addRegular(event.getMessage().split(" ")[2], event);
+                }else if(event.getMessage().split(" ")[1].equalsIgnoreCase("del")){
+                    removeRegular(event.getMessage().split(" ")[2], event);
+                }
             }
         }
     }

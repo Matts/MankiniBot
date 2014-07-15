@@ -27,13 +27,13 @@ public class StreamingUtils {
     public static boolean isOnline() throws Exception {
         try {
             if(!manualOverride){
-            if(isStreaming){
-            if(new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/streams/runew0lf")).getString("stream").contains("null")){
-                isStreaming=false;
-            }
-            }else if(!new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/streams/runew0lf")).getString("stream").contains("null")){
-                isStreaming=true;
-            }
+                if(isStreaming){
+                    if(new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/streams/runew0lf")).getString("stream").contains("null")){
+                        isStreaming=false;
+                }
+                }else if(!new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/streams/runew0lf")).getString("stream").contains("null")){
+                    isStreaming=true;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

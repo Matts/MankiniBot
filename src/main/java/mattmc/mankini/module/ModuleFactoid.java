@@ -1,14 +1,11 @@
 package mattmc.mankini.module;
 
-import mattmc.mankini.MankiniBot;
 import mattmc.mankini.libs.Strings;
-import mattmc.mankini.utils.ModUtils;
+import mattmc.mankini.utils.Permissions;
 import mattmc.mankini.utils.SQLiteListener;
 import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
-
-import javax.xml.transform.Result;
 import java.sql.*;
 
 /**
@@ -27,37 +24,36 @@ public class ModuleFactoid extends SQLiteListener
         String command = event.getMessage().split(" ")[0];
         if(command.startsWith("!")){
             String output = getOutput(event.getMessage().split(" ")[0].substring(1));
+            if(output.contains("%r")){
+                if(event.getMessage().split(" ").length>1){
+                    output = output.replaceAll("%r", event.getMessage().split(" ")[1]);
+                }
+            }
+            if(output.contains("%s")){
+                if(event.getMessage().split(" ").length>2){
+                    output = output.replaceAll("%s", event.getMessage().split(" ")[2]);
+                }
+            }
             if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
                 if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
                     if(getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")){
-                        if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-                            if(output.contains("%r")){
-                                String newString = output.replaceAll("%r", event.getMessage().split(" ")[1]);
-                                event.getChannel().send().message(newString);
-                            }
+                        if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                             event.getChannel().send().message(output);
                         }
                     }
-                }else{
-                    if(ModUtils.moderators.contains(event.getUser().getNick()) || (boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-                        if(output.contains("%r")){
-                            String newString = output.replaceAll("%r", event.getMessage().split(" ")[1]);
-                            event.getChannel().send().message(newString);
-                        }
-                        event.getChannel().send().message(output);
-                    }
-                }
             }else{
-                if(output.contains("%r")){
-                    String newString = output.replaceAll("%r", event.getMessage().split(" ")[1]);
-                    event.getChannel().send().message(newString);
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                    event.getChannel().send().message(output);
                 }
+            }
+            }else{
                 event.getChannel().send().message(output);
             }
         }
 
-        if(command.equalsIgnoreCase("^addcommand")){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+
+        if(command.equalsIgnoreCase("!addcommand")){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
             if(event.getMessage().length() >= 4){
                 try{
                // if(!commandExists(event.getMessage().split(" ")[1])){
@@ -77,8 +73,8 @@ public class ModuleFactoid extends SQLiteListener
                 event.respond(Strings.NoPerms);
             }
         }
-        if(command.equalsIgnoreCase("^delcommand")){
-            if(ModUtils.moderators.contains(event.getUser().getNick()) || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+        if(command.equalsIgnoreCase("!delcommand")){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
             if(event.getMessage().length() >= 2){
                 try{
                     if(commandExists(event.getMessage().split(" ")[1])){
@@ -102,7 +98,7 @@ public class ModuleFactoid extends SQLiteListener
         try {
             openConnection(db);
             stmt = c.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS `FACTOIDS`(COMMAND CHAR(50), USER CHAR(50), OUTPUT CHAR(50), PERM CHAR(50)) ";
+            String sql = "CREATE TABLE IF NOT EXISTS `FACTOIDS`(COMMAND CHAR(50), USER CHAR(50), OUTPUT CHAR(255), PERM CHAR(50)) ";
             stmt.executeUpdate(sql);
             stmt.close();
             closeConnection();

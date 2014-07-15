@@ -3,12 +3,14 @@ package mattmc.mankini;
 
 import mattmc.mankini.commands.*;
 import mattmc.mankini.module.*;
+import mattmc.mankini.utils.GuiApp;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -30,8 +32,10 @@ public class MankiniBot {
     public static String Owner = "mattsonmc";
 
     public static void main(String[] args){
-        setupDefaultConfigs();
-
+        if (!GraphicsEnvironment.isHeadless()) {
+            setupDefaultConfigs();
+        }
+        new GuiApp();
         new MankiniBot();
     }
     static File serverConfig = new File("config/server.yml");

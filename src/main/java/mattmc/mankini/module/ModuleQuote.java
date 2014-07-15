@@ -1,15 +1,12 @@
 package mattmc.mankini.module;
 
-import mattmc.mankini.MankiniBot;
-import mattmc.mankini.utils.ModUtils;
+import mattmc.mankini.utils.Permissions;
 import org.apache.commons.io.FileUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.Buffer;
 import java.util.Random;
 
 /**
@@ -23,13 +20,13 @@ public class ModuleQuote extends ListenerAdapter<PircBotX> {
 
         String command = event.getMessage().split(" ")[0];
         if(command.equalsIgnoreCase("!quote")){
-            if(ModUtils.moderators.contains(event.getUser().getNick())||event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner) || (boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), event.getUser().getNick())){
-            pickRandomQuote(event);
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                pickRandomQuote(event);
             }
         }
         if(command.equalsIgnoreCase("!addquote")){
-            if(ModUtils.moderators.contains(event.getUser().getNick())||event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
-            addQuote(event.getMessage().substring(10, event.getMessage().length()), event);
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                addQuote(event.getMessage().substring(10, event.getMessage().length()), event);
             }
         }
         if(command.equalsIgnoreCase("!removequote")){
