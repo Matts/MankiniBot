@@ -32,10 +32,12 @@ public class MankiniBot {
     public static String Owner = "mattsonmc";
 
     public static void main(String[] args){
+        setupDefaultConfigs();
+        
         if (!GraphicsEnvironment.isHeadless()) {
-            setupDefaultConfigs();
+            new GuiApp();
         }
-        new GuiApp();
+        
         new MankiniBot();
     }
     static File serverConfig = new File("config/server.yml");
