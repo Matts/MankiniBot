@@ -6,3 +6,10 @@ autoJoinChannel: <channel>
 
 serverHost: irc.twitch.tv
 serverPort: 6667
+
+useSQLite: false
+
+MySQLHost: <ip>
+MySQLTable: <tablename>
+MySQLUserName: <UserName>
+MySQLPassword: <password>
