@@ -42,7 +42,7 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             event.respond("A List Of Commands Can Be Found Here: http://mattmc.info/bots/mankinibot/");
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!togglestream")){
-            if(event.getUser().getNick().equalsIgnoreCase("runew0lf") || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+            if(event.getUser().getNick().equalsIgnoreCase("Scottwears") || event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 if(StreamingUtils.isStreaming==false){
                     event.getChannel().send().message("Runew0lf has started streaming!");
                     StreamingUtils.isStreaming=true;
@@ -55,16 +55,18 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                 }
             }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot")){
-            event.getChannel().send().message("༼ つ◕_◕༽つ Mankini or Riot ༼ つ◕_◕༽つ");
+            event.getChannel().send().message("(╯°□°）╯ Mankini or Riot (╯°□°）╯︵ ┻━┻");
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot1")){
             if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                event.getChannel().send().message("༼ つ◕_◕༽つ " + event.getMessage().split(" ")[1]+" or Riot ༼ つ◕_◕༽つ");
+                event.getChannel().send().message("(╯°o°）╯" + event.getMessage().split(" ")[1]+" or Riot (╯°0°）╯︵ ┻━┻");
             }
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!raid")){
             if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                event.getChannel().send().message("/me Thanks for watching! Be sure to follow if you enjoyed the stream. Hope to see you again later! Please go raid http://www.twitch.tv/"+event.getMessage().split(" ")[1]+" and say to them - Runew0lf's Mankini Raid!! ༼ つ◕_◕༽つ");
+                event.getChannel().send().message("/me Thanks for watching! Be sure to follow."
+                		+ " Hope to see you again! go raid http://www.twitch.tv/"+event.getMessage().split(" ")[1]
+                				+" and say - Runew0lf's Mankini Raid!! (╯°□°）╯");
             }
         }
         if(ViewerUtils.updateViewers.getState().equals(Thread.State.NEW)){

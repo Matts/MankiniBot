@@ -15,7 +15,8 @@ public class Permissions {
         }
         try {
             if(permToCheckFor.equals(Perms.REG)) {
-                if((boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), user) || ModUtils.moderators.contains(user)){
+                if((boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), user)
+                		|| ModUtils.moderators.contains(user)){
                     return Perms.REG;
                 }
             }

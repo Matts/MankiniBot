@@ -28,12 +28,12 @@ everyoneGot: 'Everyone got'
 NoPerms: 'You Do Not Have Permissions To Execute This Command!'
 
 ##ModuleLinks
-hasBeenPermitted: 'has given permissions to post a link to'
+hasBeenPermitted: 'has given permissions to post 1 link to'
 strike1: 'Strike 1 - Warning - Dont Post Links!'
 strike2: 'Strike 2 - TempBan - Dont Post Links! -'
 bantimeOnMSG: 10M
 bantime: '600'
 
-sendMessage: Share the love and tweet to your friends, this really doesn't help out runew0lf a lot - http://ctt.ec/5UcPZ
+sendMessage: Share the love and tweet to your friends, this really does help out runew0lf a lot - http://ctt.ec/5UcPZ
 sendMessageSleepTime: 30
 ##put the amount of minutes up there you want inbetween the messages!

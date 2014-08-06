@@ -1,6 +1,8 @@
 package mattmc.mankini.module;
 
 import mattmc.mankini.libs.Strings;
+import mattmc.mankini.utils.StreamingUtils;
+
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -27,12 +29,18 @@ public class ModuleSendMessages extends ListenerAdapter<PircBotX> {
         public void run() {
             while(true){
                try {
+            	   if(StreamingUtils.isStreaming){
                    event.getChannel().send().message(Strings.sendMessage);
                    sendMessage.sleep(60000*Strings.sendMessageSleepTime);
+            	   }
                     } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                    }
+                    
+                    }
+               
+                    
             }
         }
-    };
+    ;
 }
