@@ -1,0 +1,39 @@
+##Channel Commands
+currentlyWatching: 'viewers currently watching!'
+
+##CommandFactoid
+alreadyExists: 'That command already exists!'
+successfullyRemoved: 'Successfully Removed Command!'
+
+##CommandKinis
+autoKinisStarted: 'Auto-Kinis Are Started!'
+totalKinis: 'total Kinis'
+has: 'has'
+kinis: 'Kinis'
+
+haveBeenAdded: 'has been added'
+haveBeenRemoved: 'have been removed'
+
+getKinisExplain: 'Correct Syntax: !getKinis <UserName>'
+addKiniExplain: 'Correct Syntax: !addKinis <UserName> <Amount>'
+removeKinisExplain: 'Correct Syntax: !removeKinis <UserName> <Amount>'
+kiniAllExplain: 'Correct Syntax: !KiniAll <Amount>'
+addUserExplain: 'Correct Syntax: !addUser <UserName>'
+removeUserExplain: 'Correct Syntax: !removeUser <UserName>'
+
+kinisBeenRemoved:  'Kinis have been removed from'
+
+everyoneGot: 'Everyone got'
+
+NoPerms: 'You Do Not Have Permissions To Execute This Command!'
+
+##ModuleLinks
+hasBeenPermitted: 'has given permissions to post a link to'
+strike1: 'Strike 1 - Warning - Dont Post Links!'
+strike2: 'Strike 2 - TempBan - Dont Post Links! -'
+bantimeOnMSG: 10M
+bantime: '600'
+
+sendMessage: Share the love and tweet to your friends, this really doesn't help out runew0lf a lot - http://ctt.ec/5UcPZ
+sendMessageSleepTime: 30
+##put the amount of minutes up there you want inbetween the messages!

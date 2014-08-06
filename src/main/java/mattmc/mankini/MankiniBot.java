@@ -1,20 +1,29 @@
 package mattmc.mankini;
 
 
-import mattmc.mankini.commands.*;
-import mattmc.mankini.module.*;
-import mattmc.mankini.utils.GuiApp;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Scanner;
+
+import mattmc.mankini.commands.ChannelCommands;
+import mattmc.mankini.module.ModuleFactoid;
+import mattmc.mankini.module.ModuleKinis;
+import mattmc.mankini.module.ModuleLinks;
+import mattmc.mankini.module.ModuleMinecraft;
+import mattmc.mankini.module.ModuleQuote;
+import mattmc.mankini.module.ModuleRegular;
+import mattmc.mankini.module.ModuleSendMessages;
+
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
-
-import java.awt.*;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Project MrBot
@@ -29,14 +38,14 @@ public class MankiniBot {
 
     static Yaml yaml = new Yaml();
 
-    public static String Owner = "mattsonmc";
+    public static String Owner = ("Scottwears");
 
     public static void main(String[] args){
         setupDefaultConfigs();
         
-        if (!GraphicsEnvironment.isHeadless()) {
-            new GuiApp();
-        }
+        //if (!GraphicsEnvironment.isHeadless()) {
+          //  new GuiApp();
+        //}
         
         new MankiniBot();
     }
@@ -73,7 +82,7 @@ public class MankiniBot {
 
 
         if(!serverConfig.exists()){
-            logger.info("First Time Config Setup, Please edit the config after it got written...");
+            logger.info("First Time Config Setup, Please edit the config and restart the Bot.");
             try {
                 serverConfig.createNewFile();
                 Scanner scanner = new Scanner(MankiniBot.class.getResourceAsStream(
@@ -91,8 +100,7 @@ public class MankiniBot {
         }
 
         try {
-            conf = (Map<String, Object>) yaml.load(new FileInputStream(
-                    serverConfig));
+            conf =  (Map<String, Object>) yaml.load(new FileInputStream(serverConfig));
             strings = (Map<String, Object>) yaml.load(new FileInputStream(stringsFile));
         } catch (FileNotFoundException e) {
             logger.info(e.getMessage());
@@ -100,22 +108,18 @@ public class MankiniBot {
     }
 
 
-        Configuration<PircBotX> server = new Configuration.Builder()
+        @SuppressWarnings("unchecked")
+		Configuration<PircBotX> server = new Configuration.Builder()
                 .setEncoding(StandardCharsets.UTF_8)
 
                 .setName((String) conf.get("nick"))
                 .setAutoNickChange(true)
-
                 .setServerHostname((String) conf.get("serverHost"))
                 .setServerPassword((String) conf.get("OAuth"))
                 .setServerPort(6667)
                 .addAutoJoinChannel("#" + conf.get("autoJoinChannel"))
-
-
                 .addListener(new ChannelCommands())
-
                 .addListener(new ModuleLinks())
-
                 .addListener(new ModuleFactoid())
                 .addListener(new ModuleMinecraft())
                 .addListener(new ModuleKinis())
@@ -129,6 +133,7 @@ public class MankiniBot {
        try {
            PircBotX myBot = new PircBotX(server);
            myBot.startBot();
+          
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

@@ -67,7 +67,7 @@ public class ModuleFactoid extends SQLiteListener
                     event.respond(Colors.RED + e.getMessage());
                 }
             }else{
-                event.respond("Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>");
+                event.respond("Correct Syntax: !addCommand <lvl(ALL/REG/MOD)> <command> <output>");
             }
         }else{
                 event.respond(Strings.NoPerms);

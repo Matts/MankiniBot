@@ -50,10 +50,10 @@ public class ModuleKinis extends SQLiteListener {
     }
 
     public void autoTickAddKikis() {
-        System.out.println("5 Min Kini :D");
+        //System.out.println("5 Min Kini :D");
         for(int i = 0; i<ViewerUtils.viewers.size();i++){
             try {
-                addKinis(ViewerUtils.viewers.get(i), 1);
+                addKinis(ViewerUtils.viewers.get(i), (int) MankiniBot.conf.get("to add"));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
