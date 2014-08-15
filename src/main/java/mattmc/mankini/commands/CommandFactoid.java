@@ -1,4 +1,4 @@
-package mattmc.mankini.module;
+package mattmc.mankini.commands;
 
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.Permissions;
@@ -13,80 +13,47 @@ import java.sql.*;
  * Created by MattMc on 6/1/14.
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
-public class ModuleFactoid extends SQLiteListener
+
+public class CommandFactoid extends SQLiteListener
 {
     String db = "database\\factoid.db";
-    public ModuleFactoid(){
+    public CommandFactoid(){
         setupDB();
     }
 
     @Override
-    public void onMessage(MessageEvent<PircBotX> event) throws Exception {
-        String command = event.getMessage().split(" ")[0];
-        if(command.startsWith("!")){
-            String output = getOutput(event.getMessage().split(" ")[0].substring(1));
-            if(output.contains("%r")){
-                if(event.getMessage().split(" ").length>1){
-                    output = output.replaceAll("%r", event.getMessage().split(" ")[1]);
-                }
-            }
-            if(output.contains("%s")){
-                if(event.getMessage().split(" ").length>2){
-                    output = output.replaceAll("%s", event.getMessage().split(" ")[2]);
-                }
-            }
-            if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
-                if(!getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
-                    if(getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")){
-                        if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                            event.getChannel().send().message(output);
-                        }
-                    }
-            }else{
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
-                    event.getChannel().send().message(output);
-                }
-            }
-            }else{
-                event.getChannel().send().message(output);
-            }
-        }
-
-
-        if(command.equalsIgnoreCase("!addcommand")){
+    public void channelCommand(MessageEvent<PircBotX> event) {
+        super.channelCommand(event);
+        if(args[1].equalsIgnoreCase("add")){
             if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-            if(event.getMessage().length() >= 4){
-                try{
-               // if(!commandExists(event.getMessage().split(" ")[1])){
-                    int i = event.getMessage().split(" ")[0].length()+event.getMessage().split(" ")[1].length()+event.getMessage().split(" ")[2].length()+3;
-                    addCommand(event.getMessage().split(" ")[1], event.getMessage().split(" ")[2], event.getUser().getNick(), event.getMessage().substring(i));
-                    event.getChannel().send().message("Done!");
-                //}else{
-                    //event.respond(Strings.alreadyExists);
-                //}
-                }catch(SQLException e){
-                    event.respond(Colors.RED + e.getMessage());
+                if(event.getMessage().length() >= 4){
+                    try{
+                        int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
+                        addCommand(event.getMessage().split(" ")[2], event.getMessage().split(" ")[3], event.getUser().getNick(), event.getMessage().substring(i));
+                        event.getChannel().send().message("Done!");
+                    }catch(SQLException e){
+                        event.respond(Colors.RED + e.getMessage());
+                    }
+                }else{
+                    event.respond("Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>");
                 }
             }else{
-                event.respond("Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>");
-            }
-        }else{
                 event.respond(Strings.NoPerms);
             }
         }
-        if(command.equalsIgnoreCase("!delcommand")){
+        if(args[1].equalsIgnoreCase("del")){
             if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-            if(event.getMessage().length() >= 2){
-                try{
-                    if(commandExists(event.getMessage().split(" ")[1])){
-                        removeCommand(event.getMessage().split(" ")[1]);
-                        event.getChannel().send().message(Strings.successfullyRemoved);
+                if(event.getMessage().length() >= 2){
+                    try{
+                        if(commandExists(event.getMessage().split(" ")[2])){
+                            removeCommand(event.getMessage().split(" ")[2]);
+                            event.getChannel().send().message(Strings.successfullyRemoved);
+                        }
+                    }catch(SQLException e){
+                        event.respond(Colors.RED + e.getMessage());
                     }
-                }catch(SQLException e){
-                    event.respond(Colors.RED + e.getMessage());
                 }
-            }
-        }else{
+            }else{
                 event.respond(Strings.NoPerms);
             }
         }
@@ -159,6 +126,7 @@ public class ModuleFactoid extends SQLiteListener
         openConnection(db);
         String sql = "INSERT INTO `FACTOIDS` (COMMAND, USER, OUTPUT, PERM) VALUES(?,?,?,?)";
             PreparedStatement statement = c.prepareStatement(sql);
+            System.out.println(s + " " + command + " " + user + " " + output);
             statement.setString(1, command.toLowerCase());
             statement.setString(2, user);
             statement.setString(3, output);

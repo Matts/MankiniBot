@@ -1,8 +1,7 @@
 package mattmc.mankini.utils;
 
 import mattmc.mankini.MankiniBot;
-import org.pircbotx.PircBotX;
-import org.pircbotx.hooks.ListenerAdapter;
+import mattmc.mankini.commands.CommandBase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +15,7 @@ import java.util.Date;
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 
-public abstract class SQLiteListener extends ListenerAdapter<PircBotX> {
+public abstract class SQLiteListener extends CommandBase {
     public Connection c = null;
 
     public SQLiteListener(){

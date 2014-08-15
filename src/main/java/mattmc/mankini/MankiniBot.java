@@ -1,6 +1,7 @@
 package mattmc.mankini;
 
 
+import mattmc.mankini.module.Hooks;
 import mattmc.mankini.commands.*;
 import mattmc.mankini.module.*;
 import mattmc.mankini.utils.GuiApp;
@@ -30,7 +31,7 @@ public class MankiniBot {
 
     static Yaml yaml = new Yaml();
 
-    public static String Owner = "mattsonmc";
+    public static String Owner = "mattmc";
 
     public static void main(String[] args){
         setupDefaultConfigs();
@@ -112,17 +113,12 @@ public class MankiniBot {
                 .setServerPort(6667)
                 .addAutoJoinChannel("#" + conf.get("autoJoinChannel"))
 
+                .addListener(new ModuleSendMessages())
 
                 .addListener(new ChannelCommands())
 
-                .addListener(new ModuleLinks())
-
-                .addListener(new ModuleFactoid())
-                .addListener(new ModuleMinecraft())
-                .addListener(new ModuleKinis())
-                .addListener(new ModuleQuote())
-                .addListener(new ModuleRegular())
-                .addListener(new ModuleSendMessages())
+                .addListener(new Commands())
+                .addListener(new Hooks())
 
                 .buildConfiguration();
 

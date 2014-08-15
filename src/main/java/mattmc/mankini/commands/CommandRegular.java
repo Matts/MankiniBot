@@ -1,4 +1,4 @@
-package mattmc.mankini.module;
+package mattmc.mankini.commands;
 
 import mattmc.mankini.utils.Permissions;
 import mattmc.mankini.utils.SQLiteListener;
@@ -15,10 +15,10 @@ import java.sql.Statement;
  * Created by MattMc on 7/12/14.
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
-public class ModuleRegular extends SQLiteListener {
+public class CommandRegular extends SQLiteListener {
     String db = "database\\regulars.db";
 
-    public ModuleRegular(){
+    public CommandRegular(){
         setupDB();
     }
 
@@ -94,16 +94,22 @@ public class ModuleRegular extends SQLiteListener {
     }
 
     @Override
-    public void onMessage(MessageEvent<PircBotX> event) throws Exception {
-        String msg = event.getMessage().split(" ")[0];
-        if(msg.equalsIgnoreCase("!reg")){
+    public void channelCommand(MessageEvent<PircBotX> event) {
+        super.channelCommand(event);
             if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                if(event.getMessage().split(" ")[1].equalsIgnoreCase("add")){
-                    addRegular(event.getMessage().split(" ")[2], event);
-                }else if(event.getMessage().split(" ")[1].equalsIgnoreCase("del")){
-                    removeRegular(event.getMessage().split(" ")[2], event);
+                if(args[1].equalsIgnoreCase("add")){
+                    try {
+                        addRegular(event.getMessage().split(" ")[2], event);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }else if(args[1].equalsIgnoreCase("del")){
+                    try {
+                        removeRegular(event.getMessage().split(" ")[2], event);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
     }
 }

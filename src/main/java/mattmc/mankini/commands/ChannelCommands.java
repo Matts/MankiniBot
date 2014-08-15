@@ -27,17 +27,17 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
-    if(event.getMessage().split(" ")[0].equalsIgnoreCase("!viewers"))    {
-        if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
-        JSONObject json = new JSONObject(JSONParser.readUrl("http://tmi.twitch.tv/group/user/runew0lf/chatters"));
-        event.respond(json.get("chatter_count") + Strings.currentlyWatching);
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!viewers"))    {
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                JSONObject json = new JSONObject(JSONParser.readUrl("http://tmi.twitch.tv/group/user/runew0lf/chatters"));
+                event.respond(json.get("chatter_count") + Strings.currentlyWatching);
+            }
         }
-    }
-    if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updateusers")){
-        ModUtils.updateModerators();
-    }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updatemods")){
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updateusers")){
             ViewerUtils.updateViewers();
+        }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updatemods")){
+            ModUtils.updateModerators();
         }
         if(event.getMessage().split(" ")[0].equals("!commands") || event.getMessage().split(" ")[0].equals("!help")){
             event.respond("A List Of Commands Can Be Found Here: http://mattmc.info/bots/mankinibot/");
@@ -48,13 +48,13 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                     event.getChannel().send().message("Runew0lf has started streaming!");
                     StreamingUtils.isStreaming=true;
                     StreamingUtils.manualOverride=true;
-                }else if(StreamingUtils.isStreaming==true){
+                } else if(StreamingUtils.isStreaming==true){
                     event.getChannel().send().message("Runew0lf has stopped streaming!");
                     StreamingUtils.isStreaming=false;
                     StreamingUtils.manualOverride=false;
                 }
-                }
             }
+        }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot")){
             event.getChannel().send().message("༼ つ◕_◕༽つ Mankini or Riot ༼ つ◕_◕༽つ");
         }
@@ -68,16 +68,6 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                 event.getChannel().send().message("/me Thanks for watching! Be sure to follow if you enjoyed the stream. Hope to see you again later! Please go raid http://www.twitch.tv/"+event.getMessage().split(" ")[1]+" and say to them - Runew0lf's Mankini Raid!! ༼ つ◕_◕༽つ");
             }
         }
-        if(ViewerUtils.updateViewers.getState().equals(Thread.State.NEW)){
-            ViewerUtils.updateViewers.start();
-        }
-        if(ModUtils.updateMods.getState().equals(Thread.State.NEW)){
-            ModUtils.updateMods.start();
-        }
-        if(StreamingUtils.checkIfOnline.getState().equals(Thread.State.NEW)){
-            StreamingUtils.checkIfOnline.start();
-        }
-
     }
 
 

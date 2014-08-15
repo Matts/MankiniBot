@@ -1,7 +1,8 @@
 package mattmc.mankini.utils;
 
 import mattmc.mankini.MankiniBot;
-import mattmc.mankini.module.ModuleRegular;
+import mattmc.mankini.commands.CommandLinks;
+import mattmc.mankini.commands.CommandRegular;
 
 /**
  * Project MankiniBot
@@ -12,11 +13,15 @@ public class Permissions {
     public static Perms getPermission(String user, Perms permToCheckFor){
         user=user.toLowerCase();
         if(user.equalsIgnoreCase(MankiniBot.Owner)){
-            return Perms.MOD;
-        }
+            if(permToCheckFor==Perms.MOD){
+                return Perms.MOD;
+            }else if(permToCheckFor==Perms.REG)
+                return Perms.REG;
+            }
+
         try {
             if(permToCheckFor.equals(Perms.REG)) {
-                if((boolean)ModuleRegular.class.getMethod("isRegular", String.class).invoke(ModuleRegular.class.newInstance(), user) || ModUtils.moderators.contains(user)){
+                if((boolean)CommandRegular.class.getMethod("isRegular", String.class).invoke(CommandRegular.class.newInstance(), user) || ModUtils.moderators.contains(user)){
                     return Perms.REG;
                 }
             }
@@ -28,9 +33,14 @@ public class Permissions {
                 return Perms.MOD;
             }
         }
+        if(permToCheckFor.equals(Perms.PERMIT)){
+            if(CommandLinks.permitted.contains(user)){
+                return Perms.PERMIT;
+            }
+        }
         return Perms.ALL;
     }
     public enum Perms {
-        ALL, MOD, REG
+        ALL, MOD, REG, PERMIT
     }
 }
