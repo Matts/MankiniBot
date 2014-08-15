@@ -4,8 +4,9 @@ import mattmc.mankini.MankiniBot;
 import mattmc.mankini.module.ModuleRegular;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/14/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/14/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class Permissions {
     public static Perms getPermission(String user, Perms permToCheckFor){

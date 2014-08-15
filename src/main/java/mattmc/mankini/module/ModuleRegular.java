@@ -11,8 +11,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/12/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/12/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class ModuleRegular extends SQLiteListener {
     String db = "database\\regulars.db";

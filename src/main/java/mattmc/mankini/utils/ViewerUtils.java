@@ -6,8 +6,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/13/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/13/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class ViewerUtils {
     public static ArrayList<String> viewers = new ArrayList<String>();

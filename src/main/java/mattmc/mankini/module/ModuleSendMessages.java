@@ -8,8 +8,9 @@ import org.pircbotx.hooks.events.MessageEvent;
 import java.util.Random;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/12/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/12/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 
 public class ModuleSendMessages extends ListenerAdapter<PircBotX> {

@@ -9,8 +9,9 @@ import org.pircbotx.hooks.events.MessageEvent;
 import java.sql.*;
 
 /**
- * Project MrBot
- * Created by MattsMc on 6/1/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/1/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class ModuleFactoid extends SQLiteListener
 {

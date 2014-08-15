@@ -9,8 +9,9 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 /**
- * Project MrBot
- * Created by MattsMc on 6/2/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/2/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class MinecraftServer {
     private String host;

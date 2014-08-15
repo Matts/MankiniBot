@@ -17,8 +17,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * Project MrBot
- * Created by MattsMc on 5/24/14.
+ * Project MankiniBot
+ * Created by MattMc on 5/24/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 
 public class MankiniBot {

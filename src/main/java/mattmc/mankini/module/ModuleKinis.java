@@ -12,8 +12,9 @@ import java.io.FileReader;
 import java.sql.*;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/10/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/10/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class ModuleKinis extends SQLiteListener {
     String db = "database\\kinis.db";

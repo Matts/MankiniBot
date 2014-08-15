@@ -3,8 +3,9 @@ package mattmc.mankini.libs;
 import mattmc.mankini.MankiniBot;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/11/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/11/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class Strings {
     //String test = MankiniBot.strings.get("");

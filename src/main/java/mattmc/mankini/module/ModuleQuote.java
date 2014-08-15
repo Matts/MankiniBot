@@ -10,8 +10,9 @@ import java.io.*;
 import java.util.Random;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/12/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/12/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class ModuleQuote extends ListenerAdapter<PircBotX> {
     public static File file = new File("database/quote.txt");

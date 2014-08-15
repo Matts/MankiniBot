@@ -5,8 +5,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/11/14.
+ * Project MankiniBot
+ * Created by MattMc on 7/11/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class JSONParser {
     public static String readUrl(String urlString) throws Exception {
