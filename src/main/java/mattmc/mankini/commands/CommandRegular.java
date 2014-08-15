@@ -1,5 +1,6 @@
 package mattmc.mankini.commands;
 
+import mattmc.mankini.utils.MessageSending;
 import mattmc.mankini.utils.Permissions;
 import mattmc.mankini.utils.SQLiteListener;
 import org.pircbotx.PircBotX;
@@ -57,9 +58,9 @@ public class CommandRegular extends SQLiteListener {
             statement.executeUpdate();
             statement.close();
             closeConnection();
-            event.respond(user + " is now regular!");
+            MessageSending.sendMessageWithPrefix(user + " is now regular!", user, event);
         }else{
-            event.respond(user + " is already regular!");
+            MessageSending.sendMessageWithPrefix(user + " is already regular!", user, event);
         }
     }
 
@@ -70,9 +71,9 @@ public class CommandRegular extends SQLiteListener {
             PreparedStatement statement = c.prepareStatement(sql);
             statement.setString(1, user.toLowerCase());
             statement.executeUpdate();
-            event.respond(user + " is removed from the regular list!");
+            MessageSending.sendMessageWithPrefix(user + " is removed from the regular list!", user, event);
         }else{
-            event.respond(user + " wasn't regular in the first place!");
+            MessageSending.sendMessageWithPrefix(user + " wasn't regular in the first place!", user, event);
         }
         closeConnection();
     }

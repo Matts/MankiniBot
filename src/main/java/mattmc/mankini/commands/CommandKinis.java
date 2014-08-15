@@ -89,7 +89,7 @@ public class CommandKinis extends SQLiteListener {
         String user2 = ("2: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
         set.next();
         String user3 = ("3: " + set.getString("USER") + " : " + set.getString("AMOUNT") + " kinis");
-        event.getChannel().send().message(user1 + "  --  " + user2 + "  --  " + user3);
+        MessageSending.sendNormalMessage(user1 + "  --  " + user2 + "  --  " + user3, event);
 
         closeConnection();
         return null;
@@ -190,26 +190,24 @@ public class CommandKinis extends SQLiteListener {
         closeConnection();
     }
 
-public static boolean confirm=false;
-
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
         try{
+            if(message.equalsIgnoreCase("!kinis")){
             if(args.length<=1){
                 if(!isLocked){
                     if(userExists(event.getUser().getNick())){
-                        event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+                            MessageSending.sendMessageWithPrefix(user + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis, user, event);
                     }else{
                         addUser(event.getUser().getNick());
-                        event.getChannel().send().message(event.getUser().getNick() + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis);
+                        MessageSending.sendMessageWithPrefix(user + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis, user, event);
                     }
                 }else{
-                    event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+                    MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
                 }
             }
-
-
+            }
         if(args[1].equalsIgnoreCase("rank")){
             getTop3(event);
         }
@@ -218,16 +216,16 @@ public static boolean confirm=false;
             if(!isLocked){
                 if(event.getMessage().split(" ").length >= 2){
                     if(userExists(event.getMessage().split(" ")[2])){
-                        event.respond(event.getMessage().split(" ")[2] + Strings.has + getKinis(event.getMessage().split(" ")[2]) + Strings.totalKinis);
+                       MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.has + getKinis(event.getMessage().split(" ")[2]) + Strings.totalKinis, event.getMessage().split(" ")[2],  event);
                     }else{
                         addUser(event.getMessage().split(" ")[1]);
-                        event.respond(event.getMessage().split(" ")[2] + Strings.has + getKinis(event.getMessage().split(" ")[2]) + Strings.totalKinis);
+                        MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.has + getKinis(event.getMessage().split(" ")[2]) + Strings.totalKinis,event.getMessage().split(" ")[2], event);
                     }
                 }else{
-                    event.respond(Strings.getKinisExplain);
+                    MessageSending.sendNormalMessage(Strings.getKinisExplain,event);
                 }
             }else{
-                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
         if(args[1].equalsIgnoreCase("add")){
@@ -236,20 +234,20 @@ public static boolean confirm=false;
                     if(event.getMessage().split(" ").length>=3){
                         if(userExists(event.getMessage().split(" ")[2])){
                             addKinis(event.getMessage().split(" ")[2], Integer.parseInt(event.getMessage().split(" ")[3]));
-                            event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[3]);
+                            MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[3], event.getMessage().split(" ")[2],event);
                         }else{
                             addUser(event.getMessage().split(" ")[2]);
                             addKinis(event.getMessage().split(" ")[2], Integer.parseInt(event.getMessage().split(" ")[3]));
-                            event.respond(event.getMessage().split(" ")[3] + Strings.haveBeenAdded + event.getMessage().split(" ")[2]);
+                            MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[3], event.getMessage().split(" ")[2],event);
                         }
                     }else{
-                        event.respond(Strings.addKiniExplain);
+                        MessageSending.sendNormalMessage(Strings.addKiniExplain, event);
                     }
                 }else{
-                    event.respond(Strings.NoPerms);
+                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
-                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
         if(args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("rem") || args[1].equalsIgnoreCase("del")){
@@ -257,15 +255,15 @@ public static boolean confirm=false;
                 if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                     if(event.getMessage().split(" ").length>=3){
                         removeKinis(event.getMessage().split(" ")[2].toLowerCase(), Integer.parseInt(event.getMessage().split(" ")[3]));
-                        event.respond(event.getMessage().split(" ")[3] + Strings.haveBeenRemoved + event.getMessage().split(" ")[2].toLowerCase());
+                        MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.haveBeenRemoved + event.getMessage().split(" ")[3].toLowerCase(),event.getMessage().split(" ")[2], event);
                     }else{
-                        event.respond(Strings.removeKinisExplain);
+                        MessageSending.sendNormalMessage(Strings.removeKinisExplain, event);
                     }
                 }else{
-                    event.respond(Strings.NoPerms);
+                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
-                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
         if(args[1].equalsIgnoreCase("giveall")){
@@ -273,15 +271,15 @@ public static boolean confirm=false;
                 if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                     if(event.getMessage().split(" ").length>=2){
                         allKini(Integer.parseInt(event.getMessage().split(" ")[2]));
-                        event.respond(Strings.everyoneGot + event.getMessage().split(" ")[2] + Strings.kinis);
+                        MessageSending.sendNormalMessage(Strings.everyoneGot + event.getMessage().split(" ")[2] + Strings.kinis, event);
                     }else{
-                        event.respond(Strings.kiniAllExplain);
+                        MessageSending.sendNormalMessage(Strings.kiniAllExplain, event);
                     }
                 }else{
-                    event.respond(Strings.NoPerms);
+                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
-                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
         if(args[1].equalsIgnoreCase("adduser")){
@@ -290,18 +288,18 @@ public static boolean confirm=false;
                     if(event.getMessage().split(" ").length>=2){
                         if(!userExists(event.getMessage().split(" ")[2])){
                             addUser(event.getMessage().split(" ")[2]);
-                            event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenAdded);
+                            MessageSending.sendNormalMessage(event.getMessage().split(" ")[2] + Strings.haveBeenAdded, event);
                         }else{
-                            event.respond("User Already Exists!");
+                            MessageSending.sendNormalMessage("User Already Exists!", event);
                         }
                     }else{
-                        event.respond(Strings.addUserExplain);
+                        MessageSending.sendNormalMessage(Strings.addUserExplain, event);
                     }
                 }else{
-                    event.respond(Strings.NoPerms);
+                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
-                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
         if(args[1].equalsIgnoreCase("removeuser")){
@@ -310,32 +308,33 @@ public static boolean confirm=false;
                     if(event.getMessage().split(" ").length>=2){
                         if(userExists(event.getMessage().split(" ")[2])){
                             removeUser(event.getMessage().split(" ")[2]);
-                            event.respond(event.getMessage().split(" ")[2] + Strings.haveBeenRemoved);
+                            MessageSending.sendNormalMessage(event.getMessage().split(" ")[2] + Strings.haveBeenRemoved, event);
                         }else{
-                            event.respond("User Doesn't Exist!");
+                            MessageSending.sendNormalMessage("User Doesn't Exist!", event);
                         }
                     }else{
-                        event.respond(Strings.removeUserExplain);
+                        MessageSending.sendNormalMessage(Strings.removeUserExplain, event);
                     }
                 }else{
-                    event.respond(Strings.NoPerms);
+                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
-                event.respond("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!");
+               MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
 
         if(args[1].equalsIgnoreCase("export")){
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 isLocked=true;
-                event.respond("Kini Importing started.. All Kini Systems Locked!");
+                MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
+                isLocked=false;
             }
         }
 
         if(args[1].equalsIgnoreCase("import")){
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
                 isLocked=true;
-                event.respond("Kini Importing started.. All Kini Systems Locked!");
+                MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
                 File dbfile = new File("database\\kinis.db");
                 if((boolean)MankiniBot.conf.get("useSQLite")){
                     dbfile.delete();
@@ -371,10 +370,10 @@ public static boolean confirm=false;
                 }
             }
             isLocked=false;
-            event.getChannel().send().message("The Writing Has Been Completed, All Systems Unlocked And Running!");
+            MessageSending.sendNormalMessage("The Writing Has Been Completed, All Systems Unlocked And Running!", event);
     }
         }catch(Exception e){
-            event.respond(e.getMessage());
+            MessageSending.sendNormalMessage(e.getMessage(), event);
         }
     }
 
