@@ -1,5 +1,6 @@
-package mattmc.mankini.utils;
+package mattmc.mankini.common;
 
+import mattmc.mankini.utils.JSONParser;
 import org.json.JSONObject;
 
 /**
@@ -7,7 +8,7 @@ import org.json.JSONObject;
  * Created by MattMc on 7/12/14.
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
-public class StreamingUtils {
+public class StreamingCommon {
     public static boolean manualOverride = false;
     public static boolean isStreaming = false;
 

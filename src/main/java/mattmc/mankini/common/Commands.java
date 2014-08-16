@@ -1,4 +1,4 @@
-package mattmc.mankini;
+package mattmc.mankini.common;
 
 import mattmc.mankini.commands.*;
 import org.pircbotx.PircBotX;

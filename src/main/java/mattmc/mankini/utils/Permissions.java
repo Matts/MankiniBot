@@ -3,6 +3,7 @@ package mattmc.mankini.utils;
 import mattmc.mankini.MankiniBot;
 import mattmc.mankini.commands.CommandLinks;
 import mattmc.mankini.commands.CommandRegular;
+import mattmc.mankini.common.ModCommon;
 
 /**
  * Project MankiniBot
@@ -21,7 +22,7 @@ public class Permissions {
 
         try {
             if(permToCheckFor.equals(Perms.REG)) {
-                if((boolean)CommandRegular.class.getMethod("isRegular", String.class).invoke(CommandRegular.class.newInstance(), user) || ModUtils.moderators.contains(user)){
+                if((boolean)CommandRegular.class.getMethod("isRegular", String.class).invoke(CommandRegular.class.newInstance(), user) || ModCommon.moderators.contains(user)){
                     return Perms.REG;
                 }
             }
@@ -29,7 +30,7 @@ public class Permissions {
             e.printStackTrace();
         }
         if(permToCheckFor.equals(Perms.MOD)) {
-            if(ModUtils.moderators.contains(user)){
+            if(ModCommon.moderators.contains(user)){
                 return Perms.MOD;
             }
         }

@@ -1,10 +1,11 @@
 package mattmc.mankini;
 
 
+import mattmc.mankini.common.Commands;
 import mattmc.mankini.module.Hooks;
 import mattmc.mankini.commands.*;
 import mattmc.mankini.module.*;
-import mattmc.mankini.utils.GuiApp;
+import mattmc.mankini.libs.GuiApp;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.slf4j.Logger;

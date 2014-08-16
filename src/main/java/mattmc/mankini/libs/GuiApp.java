@@ -1,4 +1,4 @@
-package mattmc.mankini.utils;
+package mattmc.mankini.libs;
 
 import javax.swing.*;
 

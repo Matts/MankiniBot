@@ -1,12 +1,10 @@
 package mattmc.mankini.module;
 
+import mattmc.mankini.common.StreamingCommon;
 import mattmc.mankini.libs.Strings;
-import mattmc.mankini.utils.StreamingUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
-
-import java.util.Random;
 
 /**
  * Project MankiniBot
@@ -28,7 +26,7 @@ public class ModuleSendMessages extends ListenerAdapter<PircBotX> {
         @Override
         public void run() {
             while(true){
-                if(StreamingUtils.isStreaming){
+                if(StreamingCommon.isStreaming){
                 try {
                     event.getChannel().send().message(Strings.sendMessage);
                     sendMessage.sleep(60000*Strings.sendMessageSleepTime);

@@ -1,5 +1,6 @@
-package mattmc.mankini.utils;
+package mattmc.mankini.common;
 
+import mattmc.mankini.utils.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -10,10 +11,10 @@ import java.util.ArrayList;
  * Created by MattMc on 7/13/14.
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
-public class ViewerUtils {
+public class ViewerCommon {
     public static ArrayList<String> viewers = new ArrayList<String>();
 
-    public static Thread updateViewers = new Thread("ModUtils"){
+    public static Thread updateViewers = new Thread("ModCommon"){
         @Override
         public void run() {
             while(true){

@@ -97,16 +97,16 @@ public class CommandRegular extends SQLiteListener {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                 if(args[1].equalsIgnoreCase("add")){
                     try {
-                        addRegular(event.getMessage().split(" ")[2], event);
+                        addRegular(args[2], event);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }else if(args[1].equalsIgnoreCase("del")){
                     try {
-                        removeRegular(event.getMessage().split(" ")[2], event);
+                        removeRegular(args[2], event);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

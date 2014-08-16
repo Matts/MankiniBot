@@ -1,6 +1,7 @@
 package mattmc.mankini.commands;
 
 import mattmc.mankini.libs.Strings;
+import mattmc.mankini.utils.MessageSending;
 import mattmc.mankini.utils.Permissions;
 import mattmc.mankini.utils.SQLiteListener;
 import org.pircbotx.Colors;
@@ -25,36 +26,36 @@ public class CommandFactoid extends SQLiteListener
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
         if(args[1].equalsIgnoreCase("add")){
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                if(event.getMessage().length() >= 4){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(message.length() >= 4){
                     try{
                         int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
-                        addCommand(event.getMessage().split(" ")[2], event.getMessage().split(" ")[3], event.getUser().getNick(), event.getMessage().substring(i));
-                        event.getChannel().send().message("Done!");
+                        addCommand(args[2], args[3], user, message.substring(i));
+                        MessageSending.sendMessageWithPrefix(user + "Done!", user, event);
                     }catch(SQLException e){
-                        event.respond(Colors.RED + e.getMessage());
+                        MessageSending.sendNormalMessage(Colors.RED + e.getMessage(), event);
                     }
                 }else{
-                    event.respond("Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>");
+                    MessageSending.sendMessageWithPrefix(user + " Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>",user, event);
                 }
             }else{
-                event.respond(Strings.NoPerms);
+                MessageSending.sendMessageWithPrefix(user + Strings.NoPerms,user, event);
             }
         }
         if(args[1].equalsIgnoreCase("del")){
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                if(event.getMessage().length() >= 2){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(message.length() >= 2){
                     try{
-                        if(commandExists(event.getMessage().split(" ")[2])){
-                            removeCommand(event.getMessage().split(" ")[2]);
-                            event.getChannel().send().message(Strings.successfullyRemoved);
+                        if(commandExists(args[2])){
+                            removeCommand(args[2]);
+                            MessageSending.sendNormalMessage("Successfully Removed Command!", event);
                         }
                     }catch(SQLException e){
-                        event.respond(Colors.RED + e.getMessage());
+                        MessageSending.sendNormalMessage(Colors.RED + e.getMessage(), event);
                     }
                 }
             }else{
-                event.respond(Strings.NoPerms);
+                MessageSending.sendNormalMessage(Strings.NoPerms, event);
             }
         }
     }

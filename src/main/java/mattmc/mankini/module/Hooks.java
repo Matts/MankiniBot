@@ -4,11 +4,11 @@ import mattmc.mankini.MankiniBot;
 import mattmc.mankini.commands.CommandFactoid;
 import mattmc.mankini.commands.CommandKinis;
 import mattmc.mankini.commands.CommandLinks;
+import mattmc.mankini.common.ModCommon;
+import mattmc.mankini.common.StreamingCommon;
+import mattmc.mankini.common.ViewerCommon;
 import mattmc.mankini.libs.Strings;
-import mattmc.mankini.utils.ModUtils;
 import mattmc.mankini.utils.Permissions;
-import mattmc.mankini.utils.StreamingUtils;
-import mattmc.mankini.utils.ViewerUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -64,7 +64,7 @@ public class Hooks extends ListenerAdapter<PircBotX> {
                 event.getMessage().contains(".co.uk")){
             if(!Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
                 if(!CommandLinks.permitted.contains(event.getUser().getNick())){
-                    if(!(ModUtils.moderators.contains(event.getUser().getNick()))){
+                    if(!(ModCommon.moderators.contains(event.getUser().getNick()))){
                         if(!(MankiniBot.Owner.contains(event.getUser().getNick()))){
                             if(!CommandLinks.strike1.contains(event.getUser().getNick())){
                                 event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName()
@@ -88,14 +88,14 @@ public class Hooks extends ListenerAdapter<PircBotX> {
         }
 
 
-        if(ViewerUtils.updateViewers.getState().equals(Thread.State.NEW)){
-            ViewerUtils.updateViewers.start();
+        if(ViewerCommon.updateViewers.getState().equals(Thread.State.NEW)){
+            ViewerCommon.updateViewers.start();
         }
-        if(ModUtils.updateMods.getState().equals(Thread.State.NEW)){
-            ModUtils.updateMods.start();
+        if(ModCommon.updateMods.getState().equals(Thread.State.NEW)){
+            ModCommon.updateMods.start();
         }
-        if(StreamingUtils.checkIfOnline.getState().equals(Thread.State.NEW)){
-            StreamingUtils.checkIfOnline.start();
+        if(StreamingCommon.checkIfOnline.getState().equals(Thread.State.NEW)){
+            StreamingCommon.checkIfOnline.start();
         }
 
     }

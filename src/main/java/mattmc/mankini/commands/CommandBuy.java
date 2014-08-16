@@ -27,7 +27,7 @@ public class CommandBuy extends SQLiteListener {
         if(args.length<=1){
             try {
                 if(CommandBuy.getUserCache().get(user.toLowerCase())!=null){
-                    MessageSending.sendMessageWithPrefix(user + " is " + getUserRank(event.getUser().getNick()).desc, user, event);
+                    MessageSending.sendMessageWithPrefix(user + " is " + getUserRank(user).desc, user, event);
                 }else{
                     MessageSending.sendMessageWithPrefix(user + " is a CheapAss!", user, event);
                 }
@@ -44,10 +44,10 @@ public class CommandBuy extends SQLiteListener {
             try {
                 if(args[1].equalsIgnoreCase("buy")){
                     if(args[2].equalsIgnoreCase("vip")){
-                        buyRank(event.getUser().getNick().toLowerCase(), Ranks.VIP, event);
+                        buyRank(user.toLowerCase(), Ranks.VIP, event);
                     }
                     if(args[2].equalsIgnoreCase("kinilurker")){
-                        buyRank(event.getUser().getNick().toLowerCase(), Ranks.KiniLurker, event);
+                        buyRank(user.toLowerCase(), Ranks.KiniLurker, event);
                     }
                 }
                 if(args[1].equalsIgnoreCase("remove")){
@@ -199,6 +199,7 @@ public class CommandBuy extends SQLiteListener {
     }
 
     public enum Ranks {
+        Developer(100000, "Dev"),
         KiniLurker(100, "KiniLurker"),
         VIP(2000, "VIP");
 

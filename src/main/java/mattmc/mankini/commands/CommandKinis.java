@@ -1,6 +1,8 @@
 package mattmc.mankini.commands;
 
 import mattmc.mankini.MankiniBot;
+import mattmc.mankini.common.StreamingCommon;
+import mattmc.mankini.common.ViewerCommon;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.*;
 import org.pircbotx.PircBotX;
@@ -25,7 +27,7 @@ public class CommandKinis extends SQLiteListener {
         public void run(){
             while(true){
                 bool=false;
-                while(StreamingUtils.isStreaming){
+                while(StreamingCommon.isStreaming){
                     System.out.println("Auto Kini's Started");
                     try {
                         kinis.sleep(300000);
@@ -53,9 +55,9 @@ public class CommandKinis extends SQLiteListener {
 
     public void autoTickAddKikis() {
         System.out.println("5 Min Kini :D");
-        for(int i = 0; i<ViewerUtils.viewers.size();i++){
+        for(int i = 0; i< ViewerCommon.viewers.size();i++){
             try {
-                addKinis(ViewerUtils.viewers.get(i), 1);
+                addKinis(ViewerCommon.viewers.get(i), 1);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -197,11 +199,11 @@ public class CommandKinis extends SQLiteListener {
             if(message.equalsIgnoreCase("!kinis")){
             if(args.length<=1){
                 if(!isLocked){
-                    if(userExists(event.getUser().getNick())){
-                            MessageSending.sendMessageWithPrefix(user + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis, user, event);
+                    if(userExists(user)){
+                            MessageSending.sendMessageWithPrefix(user + " has " +getKinis(user) + " total Kinis!", user, event);
                     }else{
-                        addUser(event.getUser().getNick());
-                        MessageSending.sendMessageWithPrefix(user + Strings.has + getKinis(event.getUser().getNick()) + Strings.totalKinis, user, event);
+                        addUser(user);
+                        MessageSending.sendMessageWithPrefix(user + " has " + getKinis(user) + " total Kinis!", user, event);
                     }
                 }else{
                     MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -214,15 +216,15 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("get")){
             if(!isLocked){
-                if(event.getMessage().split(" ").length >= 2){
-                    if(userExists(event.getMessage().split(" ")[2])){
-                       MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.has + getKinis(event.getMessage().split(" ")[2]) + Strings.totalKinis, event.getMessage().split(" ")[2],  event);
+                if(args.length >= 2){
+                    if(userExists(args[2])){
+                       MessageSending.sendMessageWithPrefix(args[2] +  " has " + getKinis(args[2]) + " total Kinis!", args[2],  event);
                     }else{
-                        addUser(event.getMessage().split(" ")[1]);
-                        MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.has + getKinis(event.getMessage().split(" ")[2]) + Strings.totalKinis,event.getMessage().split(" ")[2], event);
+                        addUser(args[1]);
+                        MessageSending.sendMessageWithPrefix(args[2] + " has " + getKinis(args[2]) + " total Kinis!",args[2], event);
                     }
                 }else{
-                    MessageSending.sendNormalMessage(Strings.getKinisExplain,event);
+                    MessageSending.sendNormalMessage("Correct Syntax: !kinis get <UserName>",event);
                 }
             }else{
                 MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -230,18 +232,18 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("add")){
             if(!isLocked){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                    if(event.getMessage().split(" ").length>=3){
-                        if(userExists(event.getMessage().split(" ")[2])){
-                            addKinis(event.getMessage().split(" ")[2], Integer.parseInt(event.getMessage().split(" ")[3]));
-                            MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[3], event.getMessage().split(" ")[2],event);
+                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(args.length>=3){
+                        if(userExists(args[2])){
+                            addKinis(args[2], Integer.parseInt(args[3]));
+                            MessageSending.sendMessageWithPrefix(args[2] + " have been added " + args[3], args[2],event);
                         }else{
-                            addUser(event.getMessage().split(" ")[2]);
-                            addKinis(event.getMessage().split(" ")[2], Integer.parseInt(event.getMessage().split(" ")[3]));
-                            MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.haveBeenAdded + event.getMessage().split(" ")[3], event.getMessage().split(" ")[2],event);
+                            addUser(args[2]);
+                            addKinis(args[2], Integer.parseInt(args[3]));
+                            MessageSending.sendMessageWithPrefix(args[2] + " have been added " + args[3], args[2],event);
                         }
                     }else{
-                        MessageSending.sendNormalMessage(Strings.addKiniExplain, event);
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis add <UserName> <Amount>", event);
                     }
                 }else{
                     MessageSending.sendNormalMessage(Strings.NoPerms, event);
@@ -252,12 +254,12 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("rem") || args[1].equalsIgnoreCase("del")){
             if(!isLocked){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                    if(event.getMessage().split(" ").length>=3){
-                        removeKinis(event.getMessage().split(" ")[2].toLowerCase(), Integer.parseInt(event.getMessage().split(" ")[3]));
-                        MessageSending.sendMessageWithPrefix(event.getMessage().split(" ")[2] + Strings.haveBeenRemoved + event.getMessage().split(" ")[3].toLowerCase(),event.getMessage().split(" ")[2], event);
+                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(args.length>=3){
+                        removeKinis(args[2].toLowerCase(), Integer.parseInt(args[3]));
+                        MessageSending.sendMessageWithPrefix(args[2] + " have been removed " + args[3].toLowerCase(),args[2], event);
                     }else{
-                        MessageSending.sendNormalMessage(Strings.removeKinisExplain, event);
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis remove <UserName> <Amount>", event);
                     }
                 }else{
                     MessageSending.sendNormalMessage(Strings.NoPerms, event);
@@ -268,12 +270,12 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("giveall")){
             if(!isLocked){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                    if(event.getMessage().split(" ").length>=2){
-                        allKini(Integer.parseInt(event.getMessage().split(" ")[2]));
-                        MessageSending.sendNormalMessage(Strings.everyoneGot + event.getMessage().split(" ")[2] + Strings.kinis, event);
+                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(args.length>=2){
+                        allKini(Integer.parseInt(args[2]));
+                        MessageSending.sendNormalMessage("Everyone got " + args[2] + " Kinis!!", event);
                     }else{
-                        MessageSending.sendNormalMessage(Strings.kiniAllExplain, event);
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis giveall <Amount>", event);
                     }
                 }else{
                     MessageSending.sendNormalMessage(Strings.NoPerms, event);
@@ -284,16 +286,16 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("adduser")){
             if(!isLocked){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                    if(event.getMessage().split(" ").length>=2){
-                        if(!userExists(event.getMessage().split(" ")[2])){
-                            addUser(event.getMessage().split(" ")[2]);
-                            MessageSending.sendNormalMessage(event.getMessage().split(" ")[2] + Strings.haveBeenAdded, event);
+                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(args.length>=2){
+                        if(!userExists(args[2])){
+                            addUser(args[2]);
+                            MessageSending.sendNormalMessage(args[2] + " have been removed ", event);
                         }else{
                             MessageSending.sendNormalMessage("User Already Exists!", event);
                         }
                     }else{
-                        MessageSending.sendNormalMessage(Strings.addUserExplain, event);
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis adduser <UserName>", event);
                     }
                 }else{
                     MessageSending.sendNormalMessage(Strings.NoPerms, event);
@@ -304,16 +306,16 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("removeuser")){
             if(!isLocked){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                    if(event.getMessage().split(" ").length>=2){
-                        if(userExists(event.getMessage().split(" ")[2])){
-                            removeUser(event.getMessage().split(" ")[2]);
-                            MessageSending.sendNormalMessage(event.getMessage().split(" ")[2] + Strings.haveBeenRemoved, event);
+                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(args.length>=2){
+                        if(userExists(args[2])){
+                            removeUser(args[2]);
+                            MessageSending.sendNormalMessage(args[2] + " have been removed ", event);
                         }else{
                             MessageSending.sendNormalMessage("User Doesn't Exist!", event);
                         }
                     }else{
-                        MessageSending.sendNormalMessage(Strings.removeUserExplain, event);
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis remove <UserName>", event);
                     }
                 }else{
                     MessageSending.sendNormalMessage(Strings.NoPerms, event);
@@ -324,7 +326,7 @@ public class CommandKinis extends SQLiteListener {
         }
 
         if(args[1].equalsIgnoreCase("export")){
-            if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase(MankiniBot.Owner)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
                 isLocked=false;
@@ -332,7 +334,7 @@ public class CommandKinis extends SQLiteListener {
         }
 
         if(args[1].equalsIgnoreCase("import")){
-            if(event.getUser().getNick().equalsIgnoreCase("runew0lf") ||  event.getUser().getNick().equalsIgnoreCase(MankiniBot.Owner)){
+            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase(MankiniBot.Owner)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
                 File dbfile = new File("database\\kinis.db");
@@ -341,7 +343,7 @@ public class CommandKinis extends SQLiteListener {
                     dbfile.createNewFile();
                 }
                 setupDB();
-                File file = new File(event.getMessage().split(" ")[2]);
+                File file = new File(args[2]);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 String line;
                 int i=0;

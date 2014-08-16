@@ -16,19 +16,8 @@ import java.nio.charset.Charset;
 public class MinecraftServer {
     private String host;
     private int port;
-
-    public MinecraftServer(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
-
     public MinecraftServer(String host) {
         this.host = host;
-        this.port = 25565;
-    }
-
-    public MinecraftServer() {
-        this.host = "127.0.0.1";
         this.port = 25565;
     }
 

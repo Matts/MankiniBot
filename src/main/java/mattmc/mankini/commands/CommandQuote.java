@@ -1,5 +1,6 @@
 package mattmc.mankini.commands;
 
+import mattmc.mankini.utils.MessageSending;
 import mattmc.mankini.utils.Permissions;
 import org.apache.commons.io.FileUtils;
 import org.pircbotx.PircBotX;
@@ -21,18 +22,18 @@ public class CommandQuote extends CommandBase {
         super.channelCommand(event);
         if(command.equalsIgnoreCase("!quote")){
             if(args.length==1){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                if(Permissions.getPermission(user, Permissions.Perms.REG).equals(Permissions.Perms.REG)){
                     pickRandomQuote(event);
                 }
             }
             if(args.length>=2){
                 if(args[1].equalsIgnoreCase("add")){
-                    if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                        addQuote(event.getMessage().substring(11, event.getMessage().length()), event);
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                        addQuote(message.substring(11, message.length()), event);
                     }
                 }
                 if(args[1].equalsIgnoreCase("remove")){
-                    event.respond("Please ask the streamer to manually remove the command, Java doesn't give a way to find and remove a line from a text document :/");
+                    MessageSending.sendNormalMessage("Please ask the streamer to manually remove the command, Java doesn't give a way to find and remove a line from a text document :/", event);
                 }
             }
         }
@@ -53,7 +54,7 @@ public class CommandQuote extends CommandBase {
             bw.newLine();
             bw.close();
 
-            event.respond("Quote Added!");
+            MessageSending.sendNormalMessage("Quote Added!", event);
         } catch (IOException e) {
                 e.printStackTrace();
         }
@@ -76,7 +77,7 @@ public class CommandQuote extends CommandBase {
         }
         i = random.nextInt(i-1);
         if(FileUtils.readLines(file).get(i)!=null){
-        event.getChannel().send().message(FileUtils.readLines(file).get(i).toString());
+        MessageSending.sendNormalMessage(FileUtils.readLines(file).get(i).toString(), event);
         }
 
         } catch (IOException e) {

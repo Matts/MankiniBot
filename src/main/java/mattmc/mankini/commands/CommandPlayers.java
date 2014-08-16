@@ -1,5 +1,6 @@
 package mattmc.mankini.commands;
 
+import mattmc.mankini.utils.MessageSending;
 import mattmc.mankini.utils.MinecraftServer;
 import mattmc.mankini.utils.Permissions;
 import org.pircbotx.PircBotX;
@@ -15,12 +16,12 @@ public class CommandPlayers extends CommandBase {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+            if(Permissions.getPermission(user, Permissions.Perms.REG).equals(Permissions.Perms.REG)){
                     MinecraftServer server = new MinecraftServer("runew0lf.com");
                     if(!server.parseData(MinecraftServer.Connection.PING).equalsIgnoreCase("Nothing Found! Please check if the server is on!")){
-                        event.getChannel().send().message(server.parseData(MinecraftServer.Connection.PLAYERS_ONLINE));
+                        MessageSending.sendNormalMessage(server.parseData(MinecraftServer.Connection.PLAYERS_ONLINE), event);
                     } else {
-                        event.respond("Nothing Found! Please check if the server is on!");
+                        MessageSending.sendMessageWithPrefix("Nothing Found! Please check if the server is on!", user, event);
                     }
                 }
     }
