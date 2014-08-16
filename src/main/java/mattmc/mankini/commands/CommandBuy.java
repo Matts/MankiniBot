@@ -43,16 +43,16 @@ public class CommandBuy extends SQLiteListener {
             }
             try {
                 if(args[1].equalsIgnoreCase("buy")){
-                    if(args[2].equalsIgnoreCase("vip")){
-                        buyRank(user.toLowerCase(), Ranks.VIP, event);
-                    }
-                    if(args[2].equalsIgnoreCase("kinilurker")){
-                        buyRank(user.toLowerCase(), Ranks.KiniLurker, event);
-                    }
+                        buyRank(user, Ranks.valueOf(args[2].toLowerCase()), event);
                 }
                 if(args[1].equalsIgnoreCase("remove")){
                     if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                        removeUserRank(args[2].toLowerCase());
+                        removeUserRank(args[2], event, true);
+                    }
+                }
+                if(args[1].equalsIgnoreCase("add")){
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                        addUserRank(args[2], Ranks.valueOf(args[3]), event);
                     }
                 }
                 if(args[1].equalsIgnoreCase("get")){
@@ -81,10 +81,9 @@ public class CommandBuy extends SQLiteListener {
 
     @Override
     public void setupDB() {
-        Statement stmt = null;
         try {
             openConnection(db);
-            stmt = c.createStatement();
+            Statement stmt = c.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS `RANKS`(USER CHAR(50), RANK CHAR(50));";
             stmt.executeUpdate(sql);
             stmt.close();
@@ -100,14 +99,12 @@ public class CommandBuy extends SQLiteListener {
             int kinis = CommandKinis.class.newInstance().getKinis(user);
             if(kinis >= rank.amount){
             CommandKinis.class.newInstance().removeKinis(user, rank.amount);
-            addUserRank(user, rank);
-                MessageSending.sendMessageWithPrefix(user + " "+ rank.desc + " Successfully Bought!", user, event);
+            addUserRank(user.toLowerCase(), rank, event);
+                MessageSending.sendMessageWithPrefix(user + " Successfully Bought "+ rank.desc, user, event);
             }else{
                 MessageSending.sendMessageWithPrefix(user + " You Do Not Have Enough Kini's!", user, event);
             }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -120,16 +117,16 @@ public class CommandBuy extends SQLiteListener {
         ResultSet set = statement.executeQuery();
         while(set.next()){
             System.out.println(set.getString("USER") + " " + set.getString("RANK"));
-            userCache.put(set.getString("USER"), Ranks.valueOf(set.getString("RANK")));
+            userCache.put(set.getString("USER").toLowerCase(), Ranks.valueOf(set.getString("RANK").toLowerCase()));
         }
         statement.close();
         set.close();
         closeConnection();
     }
 
-    private void addUserRank(String user, Ranks rank) throws SQLException {
+    private void addUserRank(String user, Ranks rank, MessageEvent event) throws SQLException {
         if(userExistsInDB(user)){
-           removeUserRank(user);
+           removeUserRank(user, event, false);
             openConnection(db);
             String sql = "INSERT INTO `RANKS`(USER, RANK) VALUES(?,?)";
             PreparedStatement statement = c.prepareStatement(sql);
@@ -148,7 +145,7 @@ public class CommandBuy extends SQLiteListener {
             statement.close();
             closeConnection();
         }
-        userCache.put(user, rank);
+        userCache.put(user.toLowerCase(), rank);
     }
 
     public boolean userExistsInDB(String user) throws SQLException {
@@ -167,7 +164,7 @@ public class CommandBuy extends SQLiteListener {
         return true;
     }
 
-    private void removeUserRank(String user) throws SQLException {
+    private void removeUserRank(String user, MessageEvent event, boolean bcast) throws SQLException {
         if(userExistsInDB(user)){
             openConnection(db);
             String sql = "DELETE FROM `RANKS` WHERE `USER`=?";
@@ -176,6 +173,9 @@ public class CommandBuy extends SQLiteListener {
             statement.executeUpdate();
             statement.close();
             closeConnection();
+        }
+        if(bcast){
+            MessageSending.sendMessageWithPrefix(user + " has no rank anymore!", user, event);
         }
         userCache.remove(user);
     }
@@ -190,7 +190,7 @@ public class CommandBuy extends SQLiteListener {
         result = preparedStatement.executeQuery();
         if(result.next()){
             rank =  Ranks.valueOf(result.getString("RANK"));
-            userCache.put(result.getString("USER"), rank);
+            userCache.put(result.getString("USER").toLowerCase(), rank);
         }
         closeConnection();
         result.close();
@@ -199,9 +199,9 @@ public class CommandBuy extends SQLiteListener {
     }
 
     public enum Ranks {
-        Developer(100000, "Dev"),
-        KiniLurker(100, "KiniLurker"),
-        VIP(2000, "VIP");
+        developer(100000, "Dev"),
+        kinilurker(100, "KiniLurker"),
+        vip(2000, "VIP");
 
         private final Integer amount;
         private final String desc;
