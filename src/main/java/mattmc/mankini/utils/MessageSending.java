@@ -10,7 +10,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 public class MessageSending {
     public static void sendMessageWithPrefix(String message, String user, MessageEvent event){
         if(CommandBuy.getUserCache().get(user.toLowerCase())==null){
-            String prefix = "[CheapAss] ";
+            String prefix = "";
             message = prefix += message;
             event.getChannel().send().message(message);
         }else{

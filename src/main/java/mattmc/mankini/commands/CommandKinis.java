@@ -8,9 +8,7 @@ import mattmc.mankini.utils.*;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.sql.*;
 
 /**
@@ -56,11 +54,7 @@ public class CommandKinis extends SQLiteListener {
     public void autoTickAddKikis() {
         System.out.println("5 Min Kini :D");
         for(int i = 0; i< ViewerCommon.viewers.size();i++){
-            try {
                 addKinis(ViewerCommon.viewers.get(i), 1);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -80,7 +74,8 @@ public class CommandKinis extends SQLiteListener {
         }
     }
 
-    public String getTop3(MessageEvent<PircBotX> event) throws SQLException {
+    public String getTop3(MessageEvent<PircBotX> event) {
+        try{
         openConnection(db);
         String sql = "SELECT * FROM `KINIS` ORDER BY AMOUNT DESC LIMIT 3";
         PreparedStatement statement = c.prepareStatement(sql);
@@ -94,33 +89,45 @@ public class CommandKinis extends SQLiteListener {
         MessageSending.sendNormalMessage(user1 + "  --  " + user2 + "  --  " + user3, event);
 
         closeConnection();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return null;
     }
 
-    public void addUser(String user) throws SQLException {
+    public void addUser(String user){
         openConnection(db);
         String sql = "INSERT INTO `KINIS`(USER, AMOUNT) VALUES(?,?)";
+        try{
         PreparedStatement statement = c.prepareStatement(sql);
         statement.setString(1, user.toLowerCase());
         statement.setInt(2, 1);
         statement.executeUpdate();
         statement.close();
         closeConnection();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
-    public void removeUser(String user) throws SQLException {
+    public void removeUser(String user){
         if(userExists(user)){
             openConnection(db);
             String sql = "DELETE FROM `KINIS` WHERE `USER`=?";
+            try{
             PreparedStatement statement = c.prepareStatement(sql);
             statement.setString(1, user.toLowerCase());
             statement.executeUpdate();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
         closeConnection();
     }
 
-    public void removeKinis(String user, int amount) throws SQLException {
+    public void removeKinis(String user, int amount) {
         if(userExists(user)){
+            try{
             int oldAmount = getKinis(user.toLowerCase());
             int newAmount = oldAmount-amount;
             openConnection(db);
@@ -130,11 +137,15 @@ public class CommandKinis extends SQLiteListener {
             statement.setString(2, user.toLowerCase());
             statement.executeUpdate();
             closeConnection();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
          }
     }
 
-    public void addKinis(String user, int amount) throws SQLException {
+    public void addKinis(String user, int amount) {
         if(userExists(user)){
+            try{
         int oldAmount = getKinis(user.toLowerCase());
         int newAmount = oldAmount+amount;
         openConnection(db);
@@ -144,13 +155,17 @@ public class CommandKinis extends SQLiteListener {
         statement.setString(2, user.toLowerCase());
         statement.executeUpdate();
         closeConnection();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }else{
             addUser(user.toLowerCase());
             addKinis(user.toLowerCase(), amount);
         }
     }
 
-    public boolean userExists(String user) throws SQLException {
+    public boolean userExists(String user) {
+        try{
         openConnection(db);
         String sql = "SELECT * FROM `KINIS` WHERE `USER`=?";
         PreparedStatement preparedStatement;
@@ -163,12 +178,16 @@ public class CommandKinis extends SQLiteListener {
         resultSet.close();
         preparedStatement.close();
         closeConnection();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return true;
     }
 
-    public int getKinis(String user) throws SQLException {
+    public int getKinis(String user) {
         int resulty = -1;
             openConnection(db);
+        try{
             ResultSet result;
             String sql = "SELECT * FROM `KINIS` WHERE `USER`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
@@ -180,23 +199,28 @@ public class CommandKinis extends SQLiteListener {
            closeConnection();
            result.close();
            preparedStatement.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
             return resulty;
     }
 
-    private void allKini(int amount) throws SQLException {
+    private void allKini(int amount) {
         openConnection(db);
         String sql = "UPDATE `KINIS` SET `AMOUNT`=AMOUNT+?";
+        try{
         PreparedStatement statement = c.prepareStatement(sql);
         statement.setInt(1, amount);
         statement.executeUpdate();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         closeConnection();
     }
 
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-        try{
-            if(message.equalsIgnoreCase("!kinis")){
             if(args.length<=1){
                 if(!isLocked){
                     if(userExists(user)){
@@ -208,8 +232,8 @@ public class CommandKinis extends SQLiteListener {
                 }else{
                     MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
                 }
-            }
-            }
+            }else{
+
         if(args[1].equalsIgnoreCase("rank")){
             getTop3(event);
         }
@@ -309,6 +333,7 @@ public class CommandKinis extends SQLiteListener {
                 if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                     if(args.length>=2){
                         if(userExists(args[2])){
+
                             removeUser(args[2]);
                             MessageSending.sendNormalMessage(args[2] + " have been removed ", event);
                         }else{
@@ -326,14 +351,42 @@ public class CommandKinis extends SQLiteListener {
         }
 
         if(args[1].equalsIgnoreCase("export")){
+            try{
             if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase(MankiniBot.Owner)){
                 isLocked=true;
-                MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
+                MessageSending.sendNormalMessage("Kini Exporting started.. All Kini Systems Locked!", event);
+                openConnection(db);
+                String sql = "SELECT * FROM `KINIS`";
+                PreparedStatement statement = c.prepareStatement(sql);
+                ResultSet set = statement.executeQuery();
+                File file1 = new File(args[2]);
+                if(file1.exists()){
+                    file1.delete();
+                }
+                file1.createNewFile();
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file1));
+                while(set.next()){
+                writer.write("[#runew0lf."+set.getString("USER").toLowerCase() + "]");
+                    writer.newLine();
+                writer.write("kinis="+set.getInt("AMOUNT"));
+                writer.newLine();
+                    writer.newLine();
+                }
+                set.close();
+                statement.close();
+                writer.close();
                 isLocked=false;
+                MessageSending.sendNormalMessage("The Writing Has Been Completed, All Systems Unlocked And Running!", event);
+                closeConnection();
             }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
         }
 
         if(args[1].equalsIgnoreCase("import")){
+            try{
             if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase(MankiniBot.Owner)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
@@ -352,13 +405,11 @@ public class CommandKinis extends SQLiteListener {
                 while ((line = reader.readLine()) != null){
                     if(line.startsWith("[#runew0lf.")){
                         String line1 = line.substring(11, line.length()-1);
-                        System.out.println(line1);
                         user = line1;
                         i++;
                     }
                     if(line.startsWith("kinis=")){
                         String line1 = line.substring(6, line.length());
-                        System.out.println(line1);
                         kinis = line1;
                         i++;
                     }
@@ -370,22 +421,20 @@ public class CommandKinis extends SQLiteListener {
                         }
                     }
                 }
+
             }
             isLocked=false;
             MessageSending.sendNormalMessage("The Writing Has Been Completed, All Systems Unlocked And Running!", event);
-    }
-        }catch(Exception e){
-            MessageSending.sendNormalMessage(e.getMessage(), event);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
+    }
     }
 
     private void setUserAmount(String user, int kinis) {
-        try {
             removeUser(user);
             addKinis(user, kinis-1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }

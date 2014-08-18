@@ -29,7 +29,7 @@ public class CommandBuy extends SQLiteListener {
                 if(CommandBuy.getUserCache().get(user.toLowerCase())!=null){
                     MessageSending.sendMessageWithPrefix(user + " is " + getUserRank(user).desc, user, event);
                 }else{
-                    MessageSending.sendMessageWithPrefix(user + " is a CheapAss!", user, event);
+                    MessageSending.sendMessageWithPrefix(user + "", user, event);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -37,9 +37,7 @@ public class CommandBuy extends SQLiteListener {
         }
         if(args.length>=2){
             if(args[1].equalsIgnoreCase("list")){
-                for(Ranks rank: Ranks.values()){
-                    MessageSending.sendNormalMessage(rank.desc + " costs " + rank.amount, event);
-                }
+                    MessageSending.sendMessageWithPrefix(user + " You can see the full list of ranks here: http://mattmc.info/bots/mankinibot/ranks/", user, event);
             }
             try {
                 if(args[1].equalsIgnoreCase("buy")){
@@ -52,8 +50,11 @@ public class CommandBuy extends SQLiteListener {
                 }
                 if(args[1].equalsIgnoreCase("add")){
                     if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                        addUserRank(args[2], Ranks.valueOf(args[3]), event);
+                        addUserRank(args[2], Ranks.valueOf(args[3]), event, true);
                     }
+                }
+                if(args[1].equalsIgnoreCase("request")){
+                    MessageSending.sendMessageWithPrefix(user + " please send a email to matt@mattmc.info if you have a request or want to nerf something.", user, event);
                 }
                 if(args[1].equalsIgnoreCase("get")){
                     if(Permissions.getPermission(user, Permissions.Perms.REG).equals(Permissions.Perms.REG)){
@@ -99,12 +100,12 @@ public class CommandBuy extends SQLiteListener {
             int kinis = CommandKinis.class.newInstance().getKinis(user);
             if(kinis >= rank.amount){
             CommandKinis.class.newInstance().removeKinis(user, rank.amount);
-            addUserRank(user.toLowerCase(), rank, event);
+            addUserRank(user.toLowerCase(), rank, event, false);
                 MessageSending.sendMessageWithPrefix(user + " Successfully Bought "+ rank.desc, user, event);
             }else{
                 MessageSending.sendMessageWithPrefix(user + " You Do Not Have Enough Kini's!", user, event);
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -116,7 +117,6 @@ public class CommandBuy extends SQLiteListener {
         PreparedStatement statement = c.prepareStatement(sql);
         ResultSet set = statement.executeQuery();
         while(set.next()){
-            System.out.println(set.getString("USER") + " " + set.getString("RANK"));
             userCache.put(set.getString("USER").toLowerCase(), Ranks.valueOf(set.getString("RANK").toLowerCase()));
         }
         statement.close();
@@ -124,7 +124,7 @@ public class CommandBuy extends SQLiteListener {
         closeConnection();
     }
 
-    private void addUserRank(String user, Ranks rank, MessageEvent event) throws SQLException {
+    private void addUserRank(String user, Ranks rank, MessageEvent event, boolean bcast) throws SQLException {
         if(userExistsInDB(user)){
            removeUserRank(user, event, false);
             openConnection(db);
@@ -144,6 +144,9 @@ public class CommandBuy extends SQLiteListener {
             statement.executeUpdate();
             statement.close();
             closeConnection();
+        }
+        if(bcast){
+            MessageSending.sendMessageWithPrefix(" has been added to " + user, user, event);
         }
         userCache.put(user.toLowerCase(), rank);
     }
@@ -199,9 +202,14 @@ public class CommandBuy extends SQLiteListener {
     }
 
     public enum Ranks {
-        developer(100000, "Dev"),
-        kinilurker(100, "KiniLurker"),
-        vip(2000, "VIP");
+        minionnoob(3000, "MinionN00b"),
+        kiniwhore(5000, "Kini Whore"),
+        mankiniminion(5000, "Mankini Minion"),
+        mankiniassasin(5000, "Kini Assassin"),
+        dirtylurker(5000, "Dirty Lurker"),
+        kinipimp(6000, "Kini Pimp"),
+        masterlurker(9001, "Master Lurker"),
+        mankinimaster(10000, "Mankini Master");
 
         private final Integer amount;
         private final String desc;

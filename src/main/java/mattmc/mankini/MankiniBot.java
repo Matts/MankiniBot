@@ -26,6 +26,8 @@ import java.util.Scanner;
 
 public class MankiniBot {
 
+    public static final String VERSION = "V2-Stable";
+
     public static Logger logger = LoggerFactory.getLogger(MankiniBot.class);
     public static Map<String, Object> conf = null;
     public static Map<String, Object> strings = null;

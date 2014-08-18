@@ -35,6 +35,11 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                 MessageSending.sendNormalMessage(json.get("chatter_count") + " viewers currently watching!", event);
             }
         }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!version")){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                MessageSending.sendNormalMessage("MankiniBot - Current Version: " + MankiniBot.VERSION, event);
+            }
+        }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updateusers")){
             ViewerCommon.updateViewers();
         }
