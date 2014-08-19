@@ -14,6 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Scanner;
@@ -34,8 +35,6 @@ public class MankiniBot {
 
     static Yaml yaml = new Yaml();
 
-    public static String Owner = "mattmc";
-
     public static void main(String[] args){
         setupDefaultConfigs();
         
@@ -45,6 +44,8 @@ public class MankiniBot {
         
         new MankiniBot();
     }
+    public static String Owner = "";
+
     static File serverConfig = new File("config/server.yml");
     static File stringsFile = new File("config/strings.yml");
     public static void setupDefaultConfigs(){
@@ -106,7 +107,7 @@ public class MankiniBot {
 
 
         Configuration<PircBotX> server = new Configuration.Builder()
-                .setEncoding(StandardCharsets.UTF_8)
+                .setEncoding(Charset.forName("UTF8"))
 
                 .setName((String) conf.get("nick"))
                 .setAutoNickChange(true)

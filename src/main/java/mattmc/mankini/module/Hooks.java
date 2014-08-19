@@ -65,7 +65,6 @@ public class Hooks extends ListenerAdapter<PircBotX> {
             if(!Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
                 if(!CommandLinks.permitted.contains(event.getUser().getNick())){
                     if(!(ModCommon.moderators.contains(event.getUser().getNick()))){
-                        if(!(MankiniBot.Owner.contains(event.getUser().getNick()))){
                             if(!CommandLinks.strike1.contains(event.getUser().getNick())){
                                 event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName()
                                         +" :.timeout "+ event.getUser().getNick() + " 5");
@@ -80,7 +79,7 @@ public class Hooks extends ListenerAdapter<PircBotX> {
                                     CommandLinks.strike1.remove(event.getUser().getNick());
                                 }
                             }
-                        }
+
                     }
                 }
             }

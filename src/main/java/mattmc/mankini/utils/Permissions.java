@@ -18,11 +18,13 @@ public class Permissions {
                 return Perms.MOD;
             }else if(permToCheckFor==Perms.REG)
                 return Perms.REG;
-            }
+            }else if(permToCheckFor==Perms.ALL){
+                return Perms.ALL;
+        }
 
         try {
             if(permToCheckFor.equals(Perms.REG)) {
-                if((boolean)CommandRegular.class.getMethod("isRegular", String.class).invoke(CommandRegular.class.newInstance(), user) || ModCommon.moderators.contains(user)){
+                if(CommandRegular.class.newInstance().isRegular(user) || ModCommon.moderators.contains(user)){
                     return Perms.REG;
                 }
             }
@@ -32,11 +34,6 @@ public class Permissions {
         if(permToCheckFor.equals(Perms.MOD)) {
             if(ModCommon.moderators.contains(user)){
                 return Perms.MOD;
-            }
-        }
-        if(permToCheckFor.equals(Perms.PERMIT)){
-            if(CommandLinks.permitted.contains(user)){
-                return Perms.PERMIT;
             }
         }
         return Perms.ALL;

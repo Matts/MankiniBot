@@ -1,6 +1,5 @@
 package mattmc.mankini.commands;
 
-import mattmc.mankini.MankiniBot;
 import mattmc.mankini.common.StreamingCommon;
 import mattmc.mankini.common.ViewerCommon;
 import mattmc.mankini.libs.Strings;
@@ -46,8 +45,13 @@ public class CommandKinis extends SQLiteListener {
 
     public CommandKinis(){
         setupDB();
+        try {
+            ViewerCommon.updateViewers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(kinis.getState().equals(Thread.State.NEW)){
-                kinis.start();
+            kinis.start();
         }
     }
 
@@ -55,6 +59,11 @@ public class CommandKinis extends SQLiteListener {
         System.out.println("5 Min Kini :D");
         for(int i = 0; i< ViewerCommon.viewers.size();i++){
                 addKinis(ViewerCommon.viewers.get(i), 1);
+        }
+        try {
+            ViewerCommon.updateViewers();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -206,16 +215,9 @@ public class CommandKinis extends SQLiteListener {
     }
 
     private void allKini(int amount) {
-        openConnection(db);
-        String sql = "UPDATE `KINIS` SET `AMOUNT`=AMOUNT+?";
-        try{
-        PreparedStatement statement = c.prepareStatement(sql);
-        statement.setInt(1, amount);
-        statement.executeUpdate();
-        }catch(Exception e){
-            e.printStackTrace();
+        for(int i = 0; i< ViewerCommon.viewers.size();i++){
+            addKinis(ViewerCommon.viewers.get(i), amount);
         }
-        closeConnection();
     }
 
     @Override
@@ -260,11 +262,11 @@ public class CommandKinis extends SQLiteListener {
                     if(args.length>=3){
                         if(userExists(args[2])){
                             addKinis(args[2], Integer.parseInt(args[3]));
-                            MessageSending.sendMessageWithPrefix(args[2] + " have been added " + args[3], args[2],event);
+                            MessageSending.sendMessageWithPrefix(args[3] + " Kini's have been added to " + args[2], args[2],event);
                         }else{
                             addUser(args[2]);
                             addKinis(args[2], Integer.parseInt(args[3]));
-                            MessageSending.sendMessageWithPrefix(args[2] + " have been added " + args[3], args[2],event);
+                            MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been added to " + args[2], args[2],event);
                         }
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis add <UserName> <Amount>", event);
@@ -281,7 +283,7 @@ public class CommandKinis extends SQLiteListener {
                 if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
                     if(args.length>=3){
                         removeKinis(args[2].toLowerCase(), Integer.parseInt(args[3]));
-                        MessageSending.sendMessageWithPrefix(args[2] + " have been removed " + args[3].toLowerCase(),args[2], event);
+                        MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been removed from " + args[2].toLowerCase(),args[2], event);
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis remove <UserName> <Amount>", event);
                     }
@@ -314,7 +316,7 @@ public class CommandKinis extends SQLiteListener {
                     if(args.length>=2){
                         if(!userExists(args[2])){
                             addUser(args[2]);
-                            MessageSending.sendNormalMessage(args[2] + " have been removed ", event);
+                            MessageSending.sendNormalMessage(args[2] + " has been added ", event);
                         }else{
                             MessageSending.sendNormalMessage("User Already Exists!", event);
                         }
@@ -335,7 +337,7 @@ public class CommandKinis extends SQLiteListener {
                         if(userExists(args[2])){
 
                             removeUser(args[2]);
-                            MessageSending.sendNormalMessage(args[2] + " have been removed ", event);
+                            MessageSending.sendNormalMessage(args[2] + " has been removed ", event);
                         }else{
                             MessageSending.sendNormalMessage("User Doesn't Exist!", event);
                         }
@@ -352,7 +354,7 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("export")){
             try{
-            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase(MankiniBot.Owner)){
+            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase("mattsonmc")){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Exporting started.. All Kini Systems Locked!", event);
                 openConnection(db);
@@ -387,14 +389,10 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("import")){
             try{
-            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase(MankiniBot.Owner)){
+            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase("mattsonmc")){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
                 File dbfile = new File("database\\kinis.db");
-                if((boolean)MankiniBot.conf.get("useSQLite")){
-                    dbfile.delete();
-                    dbfile.createNewFile();
-                }
                 setupDB();
                 File file = new File(args[2]);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
