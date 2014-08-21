@@ -29,7 +29,7 @@ public class CommandBuy extends SQLiteListener {
                 if(CommandBuy.getUserCache().get(user.toLowerCase())!=null){
                     MessageSending.sendMessageWithPrefix(user + " is " + getUserRank(user).desc, user, event);
                 }else{
-                    MessageSending.sendMessageWithPrefix(user + "", user, event);
+                    MessageSending.sendMessageWithPrefix(user + " has no rank.", user, event);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -61,7 +61,7 @@ public class CommandBuy extends SQLiteListener {
                         if(CommandBuy.getUserCache().get(user.toLowerCase())!=null){
                             MessageSending.sendMessageWithPrefix(args[2], args[2], event);
                         }else{
-                            MessageSending.sendMessageWithPrefix(user, user, event);
+                            MessageSending.sendMessageWithPrefix(user + " has no rank.",user, event);
                         }
                     }
                 }
@@ -146,7 +146,7 @@ public class CommandBuy extends SQLiteListener {
             closeConnection();
         }
         if(bcast){
-            MessageSending.sendMessageWithPrefix(" has been added to " + user, user, event);
+            MessageSending.sendMessageWithPrefix(user + " has been added to " + rank.desc, user, event);
         }
         userCache.put(user.toLowerCase(), rank);
     }
@@ -209,7 +209,10 @@ public class CommandBuy extends SQLiteListener {
         dirtylurker(5000, "Dirty Lurker"),
         kinipimp(6000, "Kini Pimp"),
         masterlurker(9001, "Master Lurker"),
-        mankinimaster(10000, "Mankini Master");
+        mankinimaster(10000, "Mankini Master"),
+        moderator(1000000, "Moderator"),
+        developer(1000000, "Developer"),
+        kiniqueenie(5000, "Kini Queenie");
 
         private final Integer amount;
         private final String desc;

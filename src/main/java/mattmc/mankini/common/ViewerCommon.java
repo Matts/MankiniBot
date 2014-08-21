@@ -27,9 +27,10 @@ public class ViewerCommon {
             }}};
 
     public static void updateViewers() throws Exception {
-        viewers.clear();
+
         JSONObject json = new JSONObject(JSONParser.readUrl("http://tmi.twitch.tv/group/user/runew0lf/chatters"));
         JSONArray view = json.getJSONObject("chatters").getJSONArray("viewers");
+        viewers.clear();
             for(int j = 0; j < view.length(); j++){
                 viewers.add(view.getString(j));
             }

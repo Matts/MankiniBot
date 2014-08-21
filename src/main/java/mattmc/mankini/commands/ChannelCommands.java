@@ -50,7 +50,7 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             MessageSending.sendNormalMessage("A List Of Commands Can Be Found Here: http://mattmc.info/bots/mankinibot/", event);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("!togglestream")){
-            if(event.getUser().getNick().equalsIgnoreCase("runew0lf") || event.getUser().getNick().equalsIgnoreCase("MattMc")){
+            if(event.getUser().getNick().equalsIgnoreCase("runew0lf") || event.getUser().getNick().equalsIgnoreCase("mattsonmc")){
                 if(StreamingCommon.isStreaming==false){
                     MessageSending.sendMessageWithPrefix("Runew0lf has started streaming!", "runew0lf", event);
                     StreamingCommon.isStreaming=true;

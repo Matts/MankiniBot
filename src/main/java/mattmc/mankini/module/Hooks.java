@@ -86,7 +86,9 @@ public class Hooks extends ListenerAdapter<PircBotX> {
             CommandLinks.permitted.remove(event.getUser().getNick());
         }
 
-
+        if(CommandKinis.kinis.getState().equals(Thread.State.NEW)){
+            CommandKinis.kinis.start();
+        }
         if(ViewerCommon.updateViewers.getState().equals(Thread.State.NEW)){
             ViewerCommon.updateViewers.start();
         }

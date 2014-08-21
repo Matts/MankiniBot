@@ -19,8 +19,9 @@ import java.sql.*;
 public class CommandKinis extends SQLiteListener {
     String db = "database\\kinis.db";
     boolean isLocked=false;
-    boolean bool = false;
-    public Thread kinis = new Thread(){
+    static boolean bool = false;
+
+    public static Thread kinis = new Thread(){
         public void run(){
             while(true){
                 bool=false;
@@ -28,7 +29,7 @@ public class CommandKinis extends SQLiteListener {
                     System.out.println("Auto Kini's Started");
                     try {
                         kinis.sleep(300000);
-                        autoTickAddKikis();
+                        CommandKinis.class.newInstance().autoTickAddKikis();
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -50,21 +51,20 @@ public class CommandKinis extends SQLiteListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(kinis.getState().equals(Thread.State.NEW)){
-            kinis.start();
-        }
+
     }
 
     public void autoTickAddKikis() {
         System.out.println("5 Min Kini :D");
-        for(int i = 0; i< ViewerCommon.viewers.size();i++){
-                addKinis(ViewerCommon.viewers.get(i), 1);
-        }
         try {
             ViewerCommon.updateViewers();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        for(int i = 0; i< ViewerCommon.viewers.size();i++){
+                addKinis(ViewerCommon.viewers.get(i), 1);
+        }
+
     }
 
     @Override
@@ -158,11 +158,13 @@ public class CommandKinis extends SQLiteListener {
         int oldAmount = getKinis(user.toLowerCase());
         int newAmount = oldAmount+amount;
         openConnection(db);
+                System.out.println(newAmount);
         String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
         PreparedStatement statement = c.prepareStatement(sql);
         statement.setInt(1, newAmount);
         statement.setString(2, user.toLowerCase());
         statement.executeUpdate();
+        statement.close();
         closeConnection();
             }catch(Exception e){
                 e.printStackTrace();
@@ -215,9 +217,18 @@ public class CommandKinis extends SQLiteListener {
     }
 
     private void allKini(int amount) {
-        for(int i = 0; i< ViewerCommon.viewers.size();i++){
-            addKinis(ViewerCommon.viewers.get(i), amount);
+        openConnection(db);
+        String sql = "UPDATE `KINIS` SET `AMOUNT`=AMOUNT+?";
+        PreparedStatement statement = null;
+        try {
+            statement = c.prepareStatement(sql);
+
+        statement.setInt(1, amount);
+        statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        closeConnection();
     }
 
     @Override
@@ -239,7 +250,25 @@ public class CommandKinis extends SQLiteListener {
         if(args[1].equalsIgnoreCase("rank")){
             getTop3(event);
         }
-
+        if(args[1].equalsIgnoreCase("wherethefuckami")){
+            openConnection(db);
+            String sql = "SELECT * FROM `KINIS` ORDER BY AMOUNT DESC";
+            try {
+                PreparedStatement statement = c.prepareStatement(sql);
+                ResultSet result = statement.executeQuery();
+                int i = 1;
+                while(result.next()){
+                    if(result.getString("USER").equalsIgnoreCase(event.getUser().getNick())){
+                        MessageSending.sendMessageWithPrefix(user + " is on place nr " + i,user, event);
+                        MessageSending.sendMessageWithPrefix(user + " is on place nr " + i,user, event);
+                        i++;
+                    }
+                }
+            closeConnection();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         if(args[1].equalsIgnoreCase("get")){
             if(!isLocked){
                 if(args.length >= 2){
@@ -296,7 +325,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("giveall")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD) || user.equalsIgnoreCase("MattMc")){
                     if(args.length>=2){
                         allKini(Integer.parseInt(args[2]));
                         MessageSending.sendNormalMessage("Everyone got " + args[2] + " Kinis!!", event);

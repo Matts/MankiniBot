@@ -31,7 +31,7 @@ public class CommandFactoid extends SQLiteListener
                     try{
                         int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
                         addCommand(args[2], args[3], user, message.substring(i));
-                        MessageSending.sendMessageWithPrefix(user + "Done!", user, event);
+                        MessageSending.sendMessageWithPrefix(user + " Done!", user, event);
                     }catch(SQLException e){
                         MessageSending.sendNormalMessage(Colors.RED + e.getMessage(), event);
                     }

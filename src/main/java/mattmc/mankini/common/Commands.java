@@ -23,6 +23,7 @@ public class Commands extends ListenerAdapter<PircBotX> {
         commands.put("kinis", new CommandKinis());
         commands.put("reg", new CommandRegular());
         commands.put("rank", new CommandBuy());
+        commands.put("highlight", new CommandHighlight());
     }
 
     @Override
