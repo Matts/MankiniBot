@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * Project MankiniBot
@@ -19,8 +20,31 @@ import java.sql.Statement;
 public class CommandRegular extends SQLiteListener {
     String db = "database\\regulars.db";
 
+    ArrayList<String> regCache = new ArrayList<String>();
+
     public CommandRegular(){
         setupDB();
+        updateRegulars();
+    }
+
+    public void updateRegulars(){
+        openConnection(db);
+        regCache.clear();
+        try {
+        String sql = "SELECT * FROM `REG`";
+        PreparedStatement statement = c.prepareStatement(sql);
+        ResultSet set = null;
+            set = statement.executeQuery();
+
+        while(set.next()){
+            regCache.add(set.getString("USER").toLowerCase());
+        }
+        statement.close();
+        set.close();
+        closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -62,6 +86,7 @@ public class CommandRegular extends SQLiteListener {
         }else{
             MessageSending.sendMessageWithPrefix(user + " is already regular!", user, event);
         }
+        regCache.add(user);
     }
 
     public void removeRegular(String user, MessageEvent<PircBotX> event) throws SQLException {
@@ -76,28 +101,20 @@ public class CommandRegular extends SQLiteListener {
             MessageSending.sendMessageWithPrefix(user + " wasn't regular in the first place!", user, event);
         }
         closeConnection();
+        regCache.remove(user);
     }
 
     public boolean isRegular(String user) throws SQLException {
-        openConnection(db);
-        String sql = "SELECT * FROM `REG` WHERE `USER`=?";
-        PreparedStatement preparedStatement;
-        ResultSet resultSet;
-        preparedStatement = c.prepareStatement(sql);
-        preparedStatement.setString(1, user.toLowerCase());
-        resultSet = preparedStatement.executeQuery();
-        if (!resultSet.next())
-            return false;
-        resultSet.close();
-        preparedStatement.close();
-        closeConnection();
-        return true;
+       if(regCache.contains(user)){
+           return true;
+       }
+        return false;
     }
 
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                 if(args[1].equalsIgnoreCase("add")){
                     try {
                         addRegular(args[2], event);
@@ -107,6 +124,16 @@ public class CommandRegular extends SQLiteListener {
                 }else if(args[1].equalsIgnoreCase("del")){
                     try {
                         removeRegular(args[2], event);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }else if(args[1].equalsIgnoreCase("check")){
+                    try {
+                        if(isRegular(args[2])){
+                            MessageSending.sendMessageWithPrefix(args[2] + " is regular", user, event);
+                        }else{
+                            MessageSending.sendMessageWithPrefix(args[2] + " is not regular", user, event);
+                        }
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

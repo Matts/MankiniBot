@@ -43,12 +43,12 @@ public class Hooks extends ListenerAdapter<PircBotX> {
             if(!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
                 if(!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
                     if(CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")){
-                        if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                        if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                             event.getChannel().send().message(output);
                         }
                     }
                 }else{
-                    if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                    if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
                         event.getChannel().send().message(output);
                     }
                 }
@@ -62,7 +62,7 @@ public class Hooks extends ListenerAdapter<PircBotX> {
         if(event.getMessage().contains("http") || event.getMessage().contains("www.") || event.getMessage().contains(".com")
                 || event.getMessage().contains(".net") || event.getMessage().contains(".co") ||
                 event.getMessage().contains(".co.uk")){
-            if(!Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+            if(!Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
                 if(!CommandLinks.permitted.contains(event.getUser().getNick())){
                     if(!(ModCommon.moderators.contains(event.getUser().getNick()))){
                             if(!CommandLinks.strike1.contains(event.getUser().getNick())){

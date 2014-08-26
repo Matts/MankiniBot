@@ -13,9 +13,11 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 /**
- * Project Mankini
- * Created by MattsMc on 8/21/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/1/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
+
 public class CommandHighlight extends SQLiteListener {
     public static String db = "database/highlight";
 
@@ -38,12 +40,12 @@ public class CommandHighlight extends SQLiteListener {
         }
         if(args.length > 2){
             if(args[1].equalsIgnoreCase("add")){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                     addHighlight(args[2], args[3]);
                 }
             }
             if(args[1].equalsIgnoreCase("remove")||args[1].equalsIgnoreCase("del")){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                     removeHighlight(args[2]);
                 }
             }

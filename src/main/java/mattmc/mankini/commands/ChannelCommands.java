@@ -18,10 +18,10 @@ import org.pircbotx.hooks.events.*;
 
 public class ChannelCommands extends ListenerAdapter<PircBotX> {
 
-
     public ChannelCommands(){
         try {
             ModCommon.updateModerators();
+            ViewerCommon.updateViewers();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,27 +29,28 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!viewers"))    {
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+        String message = event.getMessage().split(" ")[0];
+        if(message.equalsIgnoreCase("!viewers"))    {
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
                 JSONObject json = new JSONObject(JSONParser.readUrl("http://tmi.twitch.tv/group/user/runew0lf/chatters"));
                 MessageSending.sendNormalMessage(json.get("chatter_count") + " viewers currently watching!", event);
             }
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!version")){
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+        if(message.equalsIgnoreCase("!version")){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
                 MessageSending.sendNormalMessage("MankiniBot - Current Version: " + MankiniBot.VERSION, event);
             }
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updateusers")){
+        if(message.equalsIgnoreCase("!updateusers")){
             ViewerCommon.updateViewers();
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!updatemods")){
+        if(message.equalsIgnoreCase("!updatemods")){
             ModCommon.updateModerators();
         }
-        if(event.getMessage().split(" ")[0].equals("!commands") || event.getMessage().split(" ")[0].equals("!help")){
+        if(message.equalsIgnoreCase("!commands") || message.equalsIgnoreCase("!help")){
             MessageSending.sendNormalMessage("A List Of Commands Can Be Found Here: http://mattmc.info/bots/mankinibot/", event);
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!togglestream")){
+        if(message.equalsIgnoreCase("!togglestream")){
             if(event.getUser().getNick().equalsIgnoreCase("runew0lf") || event.getUser().getNick().equalsIgnoreCase("mattsonmc")){
                 if(StreamingCommon.isStreaming==false){
                     MessageSending.sendMessageWithPrefix("Runew0lf has started streaming!", "runew0lf", event);
@@ -62,16 +63,16 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                 }
             }
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot")){
+        if(message.equalsIgnoreCase("!riot")){
             MessageSending.sendNormalMessage("༼ つ◕_◕༽つ Mankini or Riot ༼ つ◕_◕༽つ", event);
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!riot1")){
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+        if(message.equalsIgnoreCase("!riot1")){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                 MessageSending.sendNormalMessage("༼ つ◕_◕༽つ " + event.getMessage().split(" ")[1]+" or Riot ༼ つ◕_◕༽つ", event);
             }
         }
-        if(event.getMessage().split(" ")[0].equalsIgnoreCase("!raid")){
-            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+        if(message.equalsIgnoreCase("!raid")){
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                 MessageSending.sendNormalMessage("/me Thanks for watching! Be sure to follow if you enjoyed the stream. Hope to see you again later! Please go raid http://www.twitch.tv/"+event.getMessage().split(" ")[1]+" and say to them - Runew0lf's Mankini Raid!! ༼ つ◕_◕༽つ", event);
             }
         }

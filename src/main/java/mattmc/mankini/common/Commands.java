@@ -8,9 +8,11 @@ import org.pircbotx.hooks.events.MessageEvent;
 import java.util.HashMap;
 
 /**
- * Project Mankini
- * Created by MattsMc on 8/15/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/1/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
+
 public class Commands extends ListenerAdapter<PircBotX> {
     public HashMap<String, CommandBase> commands = new HashMap<String, CommandBase>();
 

@@ -31,7 +31,9 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>    <dependencies>
+    </build>
+    <dependencies>
+
         <dependency>
             <groupId>org.pircbotx</groupId>
             <artifactId>pircbotx</artifactId>

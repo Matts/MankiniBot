@@ -1,5 +1,6 @@
 package mattmc.mankini.commands;
 
+import com.google.common.collect.BiMap;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.MessageSending;
 import mattmc.mankini.utils.Permissions;
@@ -8,6 +9,8 @@ import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Project MankiniBot
@@ -18,6 +21,8 @@ import java.sql.*;
 public class CommandFactoid extends SQLiteListener
 {
     String db = "database\\factoid.db";
+    static boolean runUpdate=true;
+
     public CommandFactoid(){
         setupDB();
     }
@@ -26,7 +31,7 @@ public class CommandFactoid extends SQLiteListener
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
         if(args[1].equalsIgnoreCase("add")){
-            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                 if(message.length() >= 4){
                     try{
                         int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
@@ -36,26 +41,73 @@ public class CommandFactoid extends SQLiteListener
                         MessageSending.sendNormalMessage(Colors.RED + e.getMessage(), event);
                     }
                 }else{
-                    MessageSending.sendMessageWithPrefix(user + " Correct Syntax: ^addCommand <lvl(ALL/REG/MOD)> <command> <output>",user, event);
+                    MessageSending.sendMessageWithPrefix(user + " Correct Syntax: !command add <lvl(ALL/REG/MOD)> <command> <output>",user, event);
+                }
+            }
+        }
+        if(args[1].equalsIgnoreCase("edit")){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+                if(message.length() >= 3){
+                    try {
+                        String perm;
+                        String output;
+                        if(commandExists(args[2])){
+                            int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
+                            output = message.substring(i);
+                            perm = getPermission(args[2]);
+                            removeCommand(args[2]);
+                            addCommand(perm, args[2].toLowerCase(), null, output);
+                            MessageSending.sendMessageWithPrefix(user + " Command Edited!", user, event);
+                        }else{
+                            MessageSending.sendMessageWithPrefix(user + " That Command Doesn't Exist!", user, event);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    MessageSending.sendMessageWithPrefix(user + " Correct Args: !command edit <command_name> <new_output>",user,event);
+                }
+            }
+        }
+        if(args[1].equalsIgnoreCase("editperm")){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+                if(message.length() >= 3){
+                    String perm;
+                    String output;
+                    try {
+                        if(commandExists(args[2])){
+                            output = getOutput(args[2]);
+                            perm = args[3];
+                            removeCommand(args[2]);
+                            addCommand(perm, args[2].toLowerCase(), null, output);
+                            MessageSending.sendMessageWithPrefix(user + " The command " + args[2] + " now has new permissions!", user, event);
+                        }else{
+                            MessageSending.sendMessageWithPrefix(user + " That Command Doesn't Exist!", user, event);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }else{
-                MessageSending.sendMessageWithPrefix(user + Strings.NoPerms,user, event);
+                MessageSending.sendMessageWithPrefix(user + " Correct Args: !command edit <command_name> <new_output>",user,event);
             }
         }
         if(args[1].equalsIgnoreCase("del")){
-            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
-                if(message.length() >= 2){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+                if(message.length() >= 3){
                     try{
                         if(commandExists(args[2])){
                             removeCommand(args[2]);
                             MessageSending.sendNormalMessage("Successfully Removed Command!", event);
+                        }else{
+                            MessageSending.sendMessageWithPrefix(user + " That Command Doesn't Exist!", user, event);
                         }
                     }catch(SQLException e){
                         MessageSending.sendNormalMessage(Colors.RED + e.getMessage(), event);
                     }
+                } else{
+                    MessageSending.sendMessageWithPrefix(user + " Correct Args: !command del <command>", user, event);
                 }
-            }else{
-                MessageSending.sendNormalMessage(Strings.NoPerms, event);
             }
         }
     }
@@ -78,9 +130,9 @@ public class CommandFactoid extends SQLiteListener
 
     public String getOutput(String command) throws SQLException {
         if(commandExists(command)){
-        ResultSet result;
-        openConnection(db);
-        String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
+            ResultSet result;
+            openConnection(db);
+            String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setString(1, command.toLowerCase());
             result = preparedStatement.executeQuery();
@@ -112,27 +164,27 @@ public class CommandFactoid extends SQLiteListener
         String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
         PreparedStatement preparedStatement;
         ResultSet resultSet;
-            preparedStatement = c.prepareStatement(sql);
-            preparedStatement.setString(1, command.toLowerCase());
-            resultSet = preparedStatement.executeQuery();
-            if (!resultSet.next())
-                return false;
-            resultSet.close();
-            preparedStatement.close();
-            closeConnection();
+        preparedStatement = c.prepareStatement(sql);
+        preparedStatement.setString(1, command.toLowerCase());
+        resultSet = preparedStatement.executeQuery();
+        if (!resultSet.next())
+            return false;
+        resultSet.close();
+        preparedStatement.close();
+        closeConnection();
         return true;
     }
 
     public void addCommand(String s, String command, String user, String output) throws SQLException {
         openConnection(db);
         String sql = "INSERT INTO `FACTOIDS` (COMMAND, USER, OUTPUT, PERM) VALUES(?,?,?,?)";
-            PreparedStatement statement = c.prepareStatement(sql);
-            System.out.println(s + " " + command + " " + user + " " + output);
-            statement.setString(1, command.toLowerCase());
-            statement.setString(2, user);
-            statement.setString(3, output);
-            statement.setString(4, s);
-            statement.executeUpdate();
+        PreparedStatement statement = c.prepareStatement(sql);
+        System.out.println(s + " " + command + " " + user + " " + output);
+        statement.setString(1, command.toLowerCase());
+        statement.setString(2, user);
+        statement.setString(3, output);
+        statement.setString(4, s);
+        statement.executeUpdate();
         statement.close();
         closeConnection();
     }
@@ -140,10 +192,10 @@ public class CommandFactoid extends SQLiteListener
     public void removeCommand(String command) throws SQLException {
         openConnection(db);
         String sql = "DELETE FROM `FACTOIDS` WHERE `COMMAND` = ?;";
-            PreparedStatement statement = c.prepareStatement(sql);
-            statement.setString(1, command.toLowerCase());
-            statement.executeUpdate();
-            statement.close();
-            closeConnection();
+        PreparedStatement statement = c.prepareStatement(sql);
+        statement.setString(1, command.toLowerCase());
+        statement.executeUpdate();
+        statement.close();
+        closeConnection();
     }
 }

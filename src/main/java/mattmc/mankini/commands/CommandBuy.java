@@ -13,8 +13,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 /**
- * Project Mankini
- * Created by MattsMc on 8/15/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/1/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 
 public class CommandBuy extends SQLiteListener {
@@ -44,30 +45,42 @@ public class CommandBuy extends SQLiteListener {
                         buyRank(user, Ranks.valueOf(args[2].toLowerCase()), event);
                 }
                 if(args[1].equalsIgnoreCase("remove")){
-                    if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                         removeUserRank(args[2], event, true);
                     }
                 }
                 if(args[1].equalsIgnoreCase("add")){
-                    if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                         addUserRank(args[2], Ranks.valueOf(args[3]), event, true);
+                    }
+                }
+                if(args[1].equalsIgnoreCase("sell")){
+                    try {
+                        CommandKinis.class.newInstance().addKinis(user, getUserRank(user).getAmount()/2);
+                        MessageSending.sendMessageWithPrefix(user + " Your rank has been removed, but we couldn't retreive all your kinis back, only "+getUserRank(user).getAmount()/2 + " have been found!", user, event);
+                        removeUserRank(user, event, false);
+                        getUserCache().remove(user.toLowerCase());
+                    } catch (Exception e){
+                        e.printStackTrace();
                     }
                 }
                 if(args[1].equalsIgnoreCase("request")){
                     MessageSending.sendMessageWithPrefix(user + " please send a email to matt@mattmc.info if you have a request or want to nerf something.", user, event);
                 }
                 if(args[1].equalsIgnoreCase("get")){
-                    if(Permissions.getPermission(user, Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                    if(Permissions.getPermission(user, Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
                         if(CommandBuy.getUserCache().get(user.toLowerCase())!=null){
                             MessageSending.sendMessageWithPrefix(args[2], args[2], event);
                         }else{
-                            MessageSending.sendMessageWithPrefix(user + " has no rank.",user, event);
+                            MessageSending.sendMessageWithPrefix(args[2] + " has no rank.",user, event);
                         }
                     }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }else{
+            MessageSending.sendMessageWithPrefix("Correct Args: !rank <operation> [args-for-operation]", user, event);
         }
     }
 
@@ -98,8 +111,8 @@ public class CommandBuy extends SQLiteListener {
     private void buyRank(String user, Ranks rank, MessageEvent event) throws SQLException {
         try {
             int kinis = CommandKinis.class.newInstance().getKinis(user);
-            if(kinis >= rank.amount){
-            CommandKinis.class.newInstance().removeKinis(user, rank.amount);
+            if(kinis >= rank.getAmount()){
+            CommandKinis.class.newInstance().removeKinis(user, rank.getAmount());
             addUserRank(user.toLowerCase(), rank, event, false);
                 MessageSending.sendMessageWithPrefix(user + " Successfully Bought "+ rank.desc, user, event);
             }else{

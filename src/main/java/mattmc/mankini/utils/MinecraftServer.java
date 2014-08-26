@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
  * Created by MattMc on 6/2/14.
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
+
 public class MinecraftServer {
     private String host;
     private int port;

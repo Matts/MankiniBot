@@ -22,13 +22,13 @@ public class CommandQuote extends CommandBase {
         super.channelCommand(event);
         if(command.equalsIgnoreCase("!quote")){
             if(args.length==1){
-                if(Permissions.getPermission(user, Permissions.Perms.REG).equals(Permissions.Perms.REG)){
+                if(Permissions.getPermission(user, Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
                     pickRandomQuote(event);
                 }
             }
             if(args.length>=2){
                 if(args[1].equalsIgnoreCase("add")){
-                    if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                         addQuote(message.substring(11, message.length()), event);
                     }
                 }

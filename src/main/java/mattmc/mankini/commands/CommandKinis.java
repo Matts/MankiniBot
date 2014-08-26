@@ -256,14 +256,8 @@ public class CommandKinis extends SQLiteListener {
             try {
                 PreparedStatement statement = c.prepareStatement(sql);
                 ResultSet result = statement.executeQuery();
-                int i = 1;
-                while(result.next()){
-                    if(result.getString("USER").equalsIgnoreCase(event.getUser().getNick())){
-                        MessageSending.sendMessageWithPrefix(user + " is on place nr " + i,user, event);
-                        MessageSending.sendMessageWithPrefix(user + " is on place nr " + i,user, event);
-                        i++;
-                    }
-                }
+                int i = 0;
+                MessageSending.sendMessageWithPrefix(user + " This Command Is Not Working, Come Back Later ;)", user, event);
             closeConnection();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -287,7 +281,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("add")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                     if(args.length>=3){
                         if(userExists(args[2])){
                             addKinis(args[2], Integer.parseInt(args[3]));
@@ -300,8 +294,6 @@ public class CommandKinis extends SQLiteListener {
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis add <UserName> <Amount>", event);
                     }
-                }else{
-                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
                 MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -309,15 +301,13 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("rem") || args[1].equalsIgnoreCase("del")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                     if(args.length>=3){
                         removeKinis(args[2].toLowerCase(), Integer.parseInt(args[3]));
                         MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been removed from " + args[2].toLowerCase(),args[2], event);
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis remove <UserName> <Amount>", event);
                     }
-                }else{
-                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
                 MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -325,15 +315,13 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("giveall")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD) || user.equalsIgnoreCase("MattMc")){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD) || user.equalsIgnoreCase("MattMc")){
                     if(args.length>=2){
                         allKini(Integer.parseInt(args[2]));
                         MessageSending.sendNormalMessage("Everyone got " + args[2] + " Kinis!!", event);
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis giveall <Amount>", event);
                     }
-                }else{
-                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
                 MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -341,7 +329,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("adduser")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                     if(args.length>=2){
                         if(!userExists(args[2])){
                             addUser(args[2]);
@@ -352,8 +340,6 @@ public class CommandKinis extends SQLiteListener {
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis adduser <UserName>", event);
                     }
-                }else{
-                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
                 MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -361,7 +347,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("removeuser")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+                if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                     if(args.length>=2){
                         if(userExists(args[2])){
 
@@ -373,8 +359,6 @@ public class CommandKinis extends SQLiteListener {
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis remove <UserName>", event);
                     }
-                }else{
-                    MessageSending.sendNormalMessage(Strings.NoPerms, event);
                 }
             }else{
                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);

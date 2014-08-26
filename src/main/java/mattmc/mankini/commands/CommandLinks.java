@@ -8,8 +8,8 @@ import org.pircbotx.hooks.events.MessageEvent;
 import java.util.ArrayList;
 
 /**
- * Project Mankini
- * Created by MattsMc on 7/11/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/1/14.
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 
@@ -20,7 +20,7 @@ public class CommandLinks extends CommandBase {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-            if(Permissions.getPermission(user, Permissions.Perms.MOD).equals(Permissions.Perms.MOD)){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
                 permitted.add(args[1]);
                 event.respond(user + " has given permissions to post a link to " + args[1]);
         }

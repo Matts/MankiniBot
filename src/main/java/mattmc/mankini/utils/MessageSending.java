@@ -4,9 +4,11 @@ import mattmc.mankini.commands.CommandBuy;
 import org.pircbotx.hooks.events.MessageEvent;
 
 /**
- * Project Mankini
- * Created by MattsMc on 8/15/14.
+ * Project MankiniBot
+ * Created by MattMc on 6/1/14.
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
+
 public class MessageSending {
     public static void sendMessageWithPrefix(String message, String user, MessageEvent event){
         if(CommandBuy.getUserCache().get(user.toLowerCase())==null){
