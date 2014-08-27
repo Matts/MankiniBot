@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 
 public class Commands extends ListenerAdapter<PircBotX> {
-    public HashMap<String, CommandBase> commands = new HashMap<String, CommandBase>();
+    public HashMap<String, CommandBase> commands = new HashMap<>();
 
     public Commands(){
         commands.clear();

@@ -27,11 +27,12 @@ import java.util.Scanner;
 
 public class MankiniBot {
 
-    public static final String VERSION = "V2-Stable";
+    public static final String VERSION = "V2.1-Pre";
+    public static boolean runGUI = true;
 
     public static Logger logger = LoggerFactory.getLogger(MankiniBot.class);
-    public static Map<String, Object> conf = null;
-    public static Map<String, Object> strings = null;
+
+    public static Map<String, Object> conf, strings;
 
     static Yaml yaml = new Yaml();
 
@@ -39,7 +40,7 @@ public class MankiniBot {
         setupDefaultConfigs();
         
         if (!GraphicsEnvironment.isHeadless()) {
-            new GuiApp();
+            new GuiApp(args);
         }
         
         new MankiniBot();

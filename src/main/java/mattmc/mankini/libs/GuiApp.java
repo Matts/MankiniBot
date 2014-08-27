@@ -1,25 +1,27 @@
 package mattmc.mankini.libs;
 
+import mattmc.mankini.MankiniBot;
+
 import javax.swing.*;
 
 public class GuiApp {
-    public static void main(String[] args) {
+    public GuiApp(String[] args){
+        for(int i=0;i < args.length; i++){
+            if(args[i].equalsIgnoreCase("nogui")){
+                MankiniBot.runGUI=false;
+            }
+        }
+        if(MankiniBot.runGUI){
+            JFrame guiFrame = new JFrame();
 
-        new GuiApp();
+            guiFrame.setDefaultCloseOperation(3);
+            guiFrame.setTitle("MankiniBot " + MankiniBot.VERSION);
+            guiFrame.setSize(50,10);
+            guiFrame.setResizable(false);
+
+            guiFrame.setLocationRelativeTo(null);
+
+            guiFrame.setVisible(true);
+        }
     }
-
-    public GuiApp()
-    {
-        JFrame guiFrame = new JFrame();
-
-        guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        guiFrame.setTitle("MankiniBot");
-        guiFrame.setSize(20,10);
-        guiFrame.setResizable(false);
-
-        guiFrame.setLocationRelativeTo(null);
-
-        guiFrame.setVisible(true);
-    }
-
 }

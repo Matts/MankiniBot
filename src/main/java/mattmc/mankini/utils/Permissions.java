@@ -1,7 +1,6 @@
 package mattmc.mankini.utils;
 
 import mattmc.mankini.MankiniBot;
-import mattmc.mankini.commands.CommandLinks;
 import mattmc.mankini.commands.CommandRegular;
 import mattmc.mankini.common.ModCommon;
 import org.pircbotx.hooks.events.MessageEvent;

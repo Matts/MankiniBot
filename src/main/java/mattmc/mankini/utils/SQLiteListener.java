@@ -37,14 +37,12 @@ public abstract class SQLiteListener extends CommandBase {
                 Class.forName("com.mysql.jdbc.Driver");
                 String sql = "jdbc:mysql://"+MankiniBot.conf.get("MySQLHost") + "/" + MankiniBot.conf.get("MySQLTable")+ "?user="+MankiniBot.conf.get("MySQLUserName")+"&password="+MankiniBot.conf.get("MySQLPassword");
                 c = DriverManager.getConnection(sql);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e){
                 e.printStackTrace();
             }
-
         }
     }
+
 
     public void closeConnection(){
         try {
@@ -55,10 +53,7 @@ public abstract class SQLiteListener extends CommandBase {
     }
 
     public static String getCurrentTimeStamp() {
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-        Date now = new Date();
-        String strDate = sdfDate.format(now);
-        return strDate;
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 
 }

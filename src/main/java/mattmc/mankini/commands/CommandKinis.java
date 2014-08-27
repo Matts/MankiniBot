@@ -69,7 +69,7 @@ public class CommandKinis extends SQLiteListener {
 
     @Override
     public void setupDB() {
-        Statement stmt = null;
+        Statement stmt;
         try {
             openConnection(db);
             stmt = c.createStatement();
@@ -219,7 +219,7 @@ public class CommandKinis extends SQLiteListener {
     private void allKini(int amount) {
         openConnection(db);
         String sql = "UPDATE `KINIS` SET `AMOUNT`=AMOUNT+?";
-        PreparedStatement statement = null;
+        PreparedStatement statement;
         try {
             statement = c.prepareStatement(sql);
 
@@ -255,8 +255,7 @@ public class CommandKinis extends SQLiteListener {
             String sql = "SELECT * FROM `KINIS` ORDER BY AMOUNT DESC";
             try {
                 PreparedStatement statement = c.prepareStatement(sql);
-                ResultSet result = statement.executeQuery();
-                int i = 0;
+                statement.executeQuery();
                 MessageSending.sendMessageWithPrefix(user + " This Command Is Not Working, Come Back Later ;)", user, event);
             closeConnection();
             } catch (SQLException e) {
@@ -375,10 +374,6 @@ public class CommandKinis extends SQLiteListener {
                 PreparedStatement statement = c.prepareStatement(sql);
                 ResultSet set = statement.executeQuery();
                 File file1 = new File(args[2]);
-                if(file1.exists()){
-                    file1.delete();
-                }
-                file1.createNewFile();
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file1));
                 while(set.next()){
                 writer.write("[#runew0lf."+set.getString("USER").toLowerCase() + "]");
@@ -405,30 +400,23 @@ public class CommandKinis extends SQLiteListener {
             if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase("mattsonmc")){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
-                File dbfile = new File("database\\kinis.db");
                 setupDB();
                 File file = new File(args[2]);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 String line;
-                int i=0;
+
                 String user = null;
                 String kinis = null;
                 while ((line = reader.readLine()) != null){
                     if(line.startsWith("[#runew0lf.")){
-                        String line1 = line.substring(11, line.length()-1);
-                        user = line1;
-                        i++;
+                        user = line.substring(11, line.length()-1);
                     }
                     if(line.startsWith("kinis=")){
-                        String line1 = line.substring(6, line.length());
-                        kinis = line1;
-                        i++;
+                        kinis = line.substring(6, line.length());
                     }
                     if(line.isEmpty()){
                         if(!(Integer.parseInt(kinis) <= 5)){
                             setUserAmount(user, Integer.parseInt(kinis));
-                            i++;
-                            continue;
                         }
                     }
                 }

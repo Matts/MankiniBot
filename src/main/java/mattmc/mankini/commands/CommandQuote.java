@@ -45,7 +45,7 @@ public class CommandQuote extends CommandBase {
                 System.out.println(file.createNewFile());
             }
 
-            FileWriter fw = null;
+            FileWriter fw;
 
             fw = new FileWriter(file, true);
 
@@ -67,7 +67,7 @@ public class CommandQuote extends CommandBase {
         }
         FileReader fw = new FileReader(file);
         BufferedReader reader = new BufferedReader(fw);
-        String line = null;
+        String line;
         Random random = new Random();
         int i = 0;
         while ((line = reader.readLine()) != null){

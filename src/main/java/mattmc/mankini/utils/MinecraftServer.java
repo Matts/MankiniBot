@@ -24,7 +24,6 @@ public class MinecraftServer {
 
     public String parseData(Connection connection) {
         try {
-            @SuppressWarnings("resource")
             Socket socket = new Socket();
             OutputStream os;
             DataOutputStream dos;

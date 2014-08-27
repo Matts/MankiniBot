@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class CommandRegular extends SQLiteListener {
     String db = "database\\regulars.db";
 
-    ArrayList<String> regCache = new ArrayList<String>();
+    ArrayList<String> regCache = new ArrayList<>();
 
     public CommandRegular(){
         setupDB();
@@ -33,7 +33,7 @@ public class CommandRegular extends SQLiteListener {
         try {
         String sql = "SELECT * FROM `REG`";
         PreparedStatement statement = c.prepareStatement(sql);
-        ResultSet set = null;
+        ResultSet set;
             set = statement.executeQuery();
 
         while(set.next()){
@@ -49,7 +49,7 @@ public class CommandRegular extends SQLiteListener {
 
     @Override
     public void setupDB() {
-        Statement stmt = null;
+        Statement stmt;
         try {
             openConnection(db);
             stmt = c.createStatement();
@@ -105,10 +105,7 @@ public class CommandRegular extends SQLiteListener {
     }
 
     public boolean isRegular(String user) throws SQLException {
-       if(regCache.contains(user)){
-           return true;
-       }
-        return false;
+        return regCache.contains(user);
     }
 
     @Override

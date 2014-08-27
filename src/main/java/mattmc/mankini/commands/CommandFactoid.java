@@ -1,16 +1,10 @@
 package mattmc.mankini.commands;
 
-import com.google.common.collect.BiMap;
-import mattmc.mankini.libs.Strings;
-import mattmc.mankini.utils.MessageSending;
-import mattmc.mankini.utils.Permissions;
-import mattmc.mankini.utils.SQLiteListener;
-import org.pircbotx.Colors;
-import org.pircbotx.PircBotX;
+import mattmc.mankini.utils.*;
+import org.pircbotx.*;
 import org.pircbotx.hooks.events.MessageEvent;
+
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Project MankiniBot
@@ -21,7 +15,6 @@ import java.util.Map;
 public class CommandFactoid extends SQLiteListener
 {
     String db = "database\\factoid.db";
-    static boolean runUpdate=true;
 
     public CommandFactoid(){
         setupDB();

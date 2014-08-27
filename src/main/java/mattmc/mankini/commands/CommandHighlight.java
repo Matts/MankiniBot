@@ -1,15 +1,10 @@
 package mattmc.mankini.commands;
 
-import mattmc.mankini.utils.MessageSending;
-import mattmc.mankini.utils.Permissions;
-import mattmc.mankini.utils.SQLiteListener;
+import mattmc.mankini.utils.*;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashMap;
 
 /**
