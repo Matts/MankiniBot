@@ -19,6 +19,7 @@ import java.util.ArrayList;
  */
 public class CommandRegular extends SQLiteListener {
     String db = "database\\regulars.db";
+    public static boolean isActive;
 
     ArrayList<String> regCache = new ArrayList<>();
 

@@ -13,6 +13,9 @@ import org.pircbotx.hooks.events.MessageEvent;
  */
 
 public class CommandPlayers extends CommandBase {
+
+    public static boolean isActive;
+
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);

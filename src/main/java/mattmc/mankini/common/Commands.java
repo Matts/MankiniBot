@@ -1,6 +1,8 @@
 package mattmc.mankini.common;
 
 import mattmc.mankini.commands.*;
+import mattmc.mankini.utils.MessageSending;
+import mattmc.mankini.utils.Permissions;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -32,8 +34,22 @@ public class Commands extends ListenerAdapter<PircBotX> {
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         if(event.getMessage().startsWith("!")){
-            if(commands.containsKey(event.getMessage().substring(1).split(" ")[0])){
-                commands.get(event.getMessage().substring(1).split(" ")[0]).channelCommand(event);
+            //NOTE: The isActive Is Reversed
+            if(!commands.get(event.getMessage().split(" ")[0]).isActive){
+                if(commands.containsKey(event.getMessage().substring(1).split(" ")[0])){
+                    commands.get(event.getMessage().substring(1).split(" ")[0]).channelCommand(event);
+                }
+            }
+            if(event.getMessage().split(" ")[0].equalsIgnoreCase("!module")){
+                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                    String command = event.getMessage().split(" ")[1];
+                    commands.get(command).isActive = (!commands.get(command).isActive);
+                    if(commands.get(command).isActive){
+                        MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " +  event.getMessage().split(" ")[1] + " is now disabled.", event.getUser().getNick(), event);
+                    }else{
+                        MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " +  event.getMessage().split(" ")[1] + " is now enabled.", event.getUser().getNick(), event);
+                    }
+                }
             }
         }
     }

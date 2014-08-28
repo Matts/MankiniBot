@@ -20,6 +20,7 @@ public class CommandKinis extends SQLiteListener {
     String db = "database\\kinis.db";
     boolean isLocked=false;
     static boolean bool = false;
+    public static boolean isActive;
 
     public static Thread kinis = new Thread(){
         public void run(){

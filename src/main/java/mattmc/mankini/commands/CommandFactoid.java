@@ -16,6 +16,8 @@ public class CommandFactoid extends SQLiteListener
 {
     String db = "database\\factoid.db";
 
+    public static boolean isActive;
+
     public CommandFactoid(){
         setupDB();
     }

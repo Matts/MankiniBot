@@ -1,6 +1,7 @@
 package mattmc.mankini.commands;
 
 import mattmc.mankini.utils.MessageSending;
+import org.mozilla.javascript.ClassShutter;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.pircbotx.PircBotX;
@@ -12,6 +13,8 @@ import org.pircbotx.hooks.events.MessageEvent;
  */
 
 public class CommandJS extends CommandBase {
+
+    public static boolean isActive;
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         String var = "";
@@ -26,21 +29,21 @@ public class CommandJS extends CommandBase {
 
     public String executeJavaScript(String script)
     {
-        // Create and enter a Context. A Context stores information about the execution environment of a script.
+        try{
         Context cx = Context.enter();
-
-        try
-        {
-            Object obj = cx.compileString(script, null, 1, null);
-            return (String)obj;
-
-        }
-        catch( Exception e )
-        {
+        cx.setClassShutter(new ClassShutter() {
+            public boolean visibleToScripts(String className) {
+                if(className.startsWith("adapter"))
+                    return true;
+                return false;
+            }
+        });
+        Scriptable scope = cx.initStandardObjects();
+        Object result = cx.evaluateString(scope, script, "<cmd>", 1, null);
+        return (String)result;
+        }catch(Exception e){
             return e.getMessage();
-        }
-        finally
-        {
+        } finally {
             Context.exit();
         }
     }

@@ -16,6 +16,8 @@ import java.util.HashMap;
 public class CommandBuy extends SQLiteListener {
     String db = "database\\ranks.db";
 
+    public static boolean isActive;
+
     private static HashMap<String, Ranks> userCache = new HashMap<String, Ranks>();
 
     @Override

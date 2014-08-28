@@ -16,6 +16,8 @@ import java.util.HashMap;
 public class CommandHighlight extends SQLiteListener {
     public static String db = "database/highlight";
 
+    public static boolean isActive;
+
     public CommandHighlight(){
         setupDB();
         getHighlights();

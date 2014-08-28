@@ -16,6 +16,7 @@ import java.util.Random;
  */
 public class CommandQuote extends CommandBase {
     public static File file = new File("database/quote.txt");
+    public static boolean isActive;
 
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {

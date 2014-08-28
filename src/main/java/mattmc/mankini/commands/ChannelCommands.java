@@ -89,7 +89,7 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
         if(message.equalsIgnoreCase("!stats"))    {
             if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event,true).equals(Permissions.Perms.REG)){
                 JSONObject json = new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/channels/runew0lf"));
-                MessageSending.sendNormalMessage("Since he started streaming Runew0lf has gained " + json.get("followers") + ", and the Channel has had " + json.get("views") , event);
+                MessageSending.sendNormalMessage("Since he started streaming Runew0lf has gained " + json.get("followers") + " followers, and the Channel has had " + json.get("views") +" views", event);
 
             }
         }

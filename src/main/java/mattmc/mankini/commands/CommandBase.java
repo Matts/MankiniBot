@@ -10,8 +10,10 @@ import org.pircbotx.hooks.events.MessageEvent;
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 
-public class CommandBase {
+public abstract class CommandBase {
     public CommandBase(){}
+
+    public static boolean isActive;
 
     public String message;
     public String command;

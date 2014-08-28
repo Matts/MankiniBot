@@ -17,6 +17,8 @@ public class CommandLinks extends CommandBase {
     public static ArrayList<String> permitted = new ArrayList<String>();
     public static ArrayList<String> strike1 = new ArrayList<String>();
 
+    public static boolean isActive;
+
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
