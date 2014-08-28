@@ -11,7 +11,7 @@ import org.pircbotx.hooks.events.MessageEvent;
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class Permissions {
-    public static Perms getPermission(String user, Perms permToCheckFor, MessageEvent event){
+    public static Perms getPermission(String user, Perms permToCheckFor, MessageEvent event, boolean bcast){
         user=user.toLowerCase();
         if(user.equalsIgnoreCase(MankiniBot.Owner)){
             if(permToCheckFor==Perms.MOD){
@@ -28,7 +28,9 @@ public class Permissions {
                 if(CommandRegular.class.newInstance().isRegular(user) || ModCommon.moderators.contains(user)){
                     return Perms.REG;
                 }else{
-                    MessageSending.sendMessageWithPrefix(user + "You Do Not Have Permissions To Do That", user, event);
+                    if(bcast){
+                        MessageSending.sendMessageWithPrefix(user + "You Do Not Have Permissions To Do That", user, event);
+                    }
                 }
             }
         } catch (Exception e){
@@ -38,7 +40,9 @@ public class Permissions {
             if(ModCommon.moderators.contains(user)){
                 return Perms.MOD;
             }else{
-                MessageSending.sendMessageWithPrefix(user + " You Do Not Have Permissions To Do That", user, event);
+                if(bcast){
+                    MessageSending.sendMessageWithPrefix(user + " You Do Not Have Permissions To Do That", user, event);
+                }
             }
         }
         return Perms.ALL;

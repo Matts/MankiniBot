@@ -45,7 +45,7 @@ public class MankiniBot {
         
         new MankiniBot();
     }
-    public static String Owner = "MattMc";
+    public static String Owner = "mattsonmc";
 
     static File serverConfig = new File("config/server.yml");
     static File stringsFile = new File("config/strings.yml");

@@ -41,12 +41,12 @@ public class CommandBuy extends SQLiteListener {
                         buyRank(user, Ranks.valueOf(args[2].toLowerCase()), event);
                 }
                 if(args[1].equalsIgnoreCase("remove")){
-                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                         removeUserRank(args[2], event, true);
                     }
                 }
                 if(args[1].equalsIgnoreCase("add")){
-                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                         addUserRank(args[2], Ranks.valueOf(args[3]), event, true);
                     }
                 }
@@ -64,7 +64,7 @@ public class CommandBuy extends SQLiteListener {
                     MessageSending.sendMessageWithPrefix(user + " please send a email to matt@mattmc.info if you have a request or want to nerf something.", user, event);
                 }
                 if(args[1].equalsIgnoreCase("get")){
-                    if(Permissions.getPermission(user, Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
+                    if(Permissions.getPermission(user, Permissions.Perms.REG, event, true).equals(Permissions.Perms.REG)){
                         if(CommandBuy.getUserCache().get(user.toLowerCase())!=null){
                             MessageSending.sendMessageWithPrefix(args[2], args[2], event);
                         }else{

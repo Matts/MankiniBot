@@ -111,7 +111,7 @@ public class CommandRegular extends SQLiteListener {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                 if(args[1].equalsIgnoreCase("add")){
                     try {
                         addRegular(args[2], event);
@@ -127,9 +127,9 @@ public class CommandRegular extends SQLiteListener {
                 }else if(args[1].equalsIgnoreCase("check")){
                     try {
                         if(isRegular(args[2])){
-                            MessageSending.sendMessageWithPrefix(args[2] + " is regular", user, event);
+                            MessageSending.sendMessageWithPrefix(user + " " + args[2] + " is regular", user, event);
                         }else{
-                            MessageSending.sendMessageWithPrefix(args[2] + " is not regular", user, event);
+                            MessageSending.sendMessageWithPrefix(user + " " + args[2] + " is not regular", user, event);
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
