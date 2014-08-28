@@ -76,7 +76,23 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
                 MessageSending.sendNormalMessage("/me Thanks for watching! Be sure to follow if you enjoyed the stream. Hope to see you again later! Please go raid http://www.twitch.tv/"+event.getMessage().split(" ")[1]+" and say to them - Runew0lf's Mankini Raid!! ༼ つ◕_◕༽つ", event);
             }
         }
+        
+        //this command grabs the title and stream status
+        if(message.equalsIgnoreCase("!status")||message.equalsIgnoreCase("!title")||message.equalsIgnoreCase("!game"))    {
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
+                JSONObject json = new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/channels/runew0lf"));
+                MessageSending.sendNormalMessage("playing " + json.get("game")+ ": " + json.get("status"), event);
+               
+            }
     }
+        if(message.equalsIgnoreCase("!stats"))    {
+            if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event).equals(Permissions.Perms.REG)){
+                JSONObject json = new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/channels/runew0lf"));
+                MessageSending.sendNormalMessage("Since he started streaming Runew0lf has gained " + json.get("followers") + ", and the Channel has had " + json.get("views") , event);
+               
+            }
+    }
+        }
 
 
 
