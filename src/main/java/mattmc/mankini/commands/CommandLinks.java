@@ -20,7 +20,7 @@ public class CommandLinks extends CommandBase {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event).equals(Permissions.Perms.MOD)){
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                 permitted.add(args[1]);
                 event.respond(user + " has given permissions to post a link to " + args[1]);
         }

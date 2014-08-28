@@ -26,6 +26,7 @@ public class Commands extends ListenerAdapter<PircBotX> {
         commands.put("reg", new CommandRegular());
         commands.put("rank", new CommandBuy());
         commands.put("highlight", new CommandHighlight());
+        commands.put("js", new CommandJS());
     }
 
     @Override
