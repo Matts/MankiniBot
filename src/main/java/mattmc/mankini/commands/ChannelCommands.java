@@ -97,10 +97,4 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " The Result Is " +  new Evaluator().evaluate(event.getMessage().substring(event.getMessage().split(" ")[1].length()+1)), event.getUser().getNick(), event);
         }
     }
-
-
-
-
-
-
 }
