@@ -2,7 +2,6 @@ package mattmc.mankini.commands;
 
 import mattmc.mankini.common.StreamingCommon;
 import mattmc.mankini.common.ViewerCommon;
-import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.*;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -29,7 +28,7 @@ public class CommandKinis extends SQLiteListener {
                 while(StreamingCommon.isStreaming){
                     System.out.println("Auto Kini's Started");
                     try {
-                        kinis.sleep(300000);
+                        sleep(300000);
                         CommandKinis.class.newInstance().autoTickAddKikis();
                     } catch (Exception e){
                         e.printStackTrace();
@@ -37,7 +36,7 @@ public class CommandKinis extends SQLiteListener {
                 }
 
                 try {
-                    kinis.sleep(1000);
+                    sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -121,79 +120,71 @@ public class CommandKinis extends SQLiteListener {
     }
 
     public void removeUser(String user){
-        if(userExists(user)){
-            openConnection(db);
-            String sql = "DELETE FROM `KINIS` WHERE `USER`=?";
-            try{
-            PreparedStatement statement = c.prepareStatement(sql);
-            statement.setString(1, user.toLowerCase());
-            statement.executeUpdate();
-            }catch(Exception e){
-                e.printStackTrace();
+        try {
+            if(existsInDatabase(db, "KINIS", user.toLowerCase())){
+                openConnection(db);
+                String sql = "DELETE FROM `KINIS` WHERE `USER`=?";
+                try{
+                PreparedStatement statement = c.prepareStatement(sql);
+                statement.setString(1, user.toLowerCase());
+                statement.executeUpdate();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         closeConnection();
     }
 
     public void removeKinis(String user, int amount) {
-        if(userExists(user)){
-            try{
-            int oldAmount = getKinis(user.toLowerCase());
-            int newAmount = oldAmount-amount;
-            openConnection(db);
-            String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
-            PreparedStatement statement = c.prepareStatement(sql);
-        statement.setInt(1, newAmount);
-            statement.setString(2, user.toLowerCase());
-            statement.executeUpdate();
-            closeConnection();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-         }
+        try {
+            if(existsInDatabase(db, "KINIS", user.toLowerCase())){
+                try{
+                int oldAmount = getKinis(user.toLowerCase());
+                int newAmount = oldAmount-amount;
+                openConnection(db);
+                String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
+                PreparedStatement statement = c.prepareStatement(sql);
+            statement.setInt(1, newAmount);
+                statement.setString(2, user.toLowerCase());
+                statement.executeUpdate();
+                closeConnection();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addKinis(String user, int amount) {
-        if(userExists(user)){
-            try{
-        int oldAmount = getKinis(user.toLowerCase());
-        int newAmount = oldAmount+amount;
-        openConnection(db);
-                System.out.println(newAmount);
-        String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
-        PreparedStatement statement = c.prepareStatement(sql);
-        statement.setInt(1, newAmount);
-        statement.setString(2, user.toLowerCase());
-        statement.executeUpdate();
-        statement.close();
-        closeConnection();
-            }catch(Exception e){
-                e.printStackTrace();
+        try {
+            if(existsInDatabase(db, "KINIS", user.toLowerCase())){
+                try{
+            int oldAmount = getKinis(user.toLowerCase());
+            int newAmount = oldAmount+amount;
+            openConnection(db);
+                    System.out.println(newAmount);
+            String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
+            PreparedStatement statement = c.prepareStatement(sql);
+            statement.setInt(1, newAmount);
+            statement.setString(2, user.toLowerCase());
+            statement.executeUpdate();
+            statement.close();
+            closeConnection();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+                addUser(user.toLowerCase());
+                addKinis(user.toLowerCase(), amount);
             }
-        }else{
-            addUser(user.toLowerCase());
-            addKinis(user.toLowerCase(), amount);
-        }
-    }
-
-    public boolean userExists(String user) {
-        try{
-        openConnection(db);
-        String sql = "SELECT * FROM `KINIS` WHERE `USER`=?";
-        PreparedStatement preparedStatement;
-        ResultSet resultSet;
-        preparedStatement = c.prepareStatement(sql);
-        preparedStatement.setString(1, user.toLowerCase());
-        resultSet = preparedStatement.executeQuery();
-        if (!resultSet.next())
-            return false;
-        resultSet.close();
-        preparedStatement.close();
-        closeConnection();
-        }catch(Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
     public int getKinis(String user) {
@@ -237,11 +228,15 @@ public class CommandKinis extends SQLiteListener {
         super.channelCommand(event);
             if(args.length<=1){
                 if(!isLocked){
-                    if(userExists(user)){
-                            MessageSending.sendMessageWithPrefix(user + " has " +getKinis(user) + " total Kinis!", user, event);
-                    }else{
-                        addUser(user);
-                        MessageSending.sendMessageWithPrefix(user + " has " + getKinis(user) + " total Kinis!", user, event);
+                    try {
+                        if(existsInDatabase(db, "KINIS", user.toLowerCase())){
+                                MessageSending.sendMessageWithPrefix(user + " has " +getKinis(user) + " total Kinis!", user, event);
+                        }else{
+                            addUser(user);
+                            MessageSending.sendMessageWithPrefix(user + " has " + getKinis(user) + " total Kinis!", user, event);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                 }else{
                     MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
@@ -266,11 +261,15 @@ public class CommandKinis extends SQLiteListener {
         if(args[1].equalsIgnoreCase("get")){
             if(!isLocked){
                 if(args.length >= 2){
-                    if(userExists(args[2])){
-                       MessageSending.sendMessageWithPrefix(args[2] +  " has " + getKinis(args[2]) + " total Kinis!", args[2],  event);
-                    }else{
-                        addUser(args[1]);
-                        MessageSending.sendMessageWithPrefix(args[2] + " has " + getKinis(args[2]) + " total Kinis!",args[2], event);
+                    try {
+                        if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
+                           MessageSending.sendMessageWithPrefix(args[2] +  " has " + getKinis(args[2]) + " total Kinis!", args[2],  event);
+                        }else{
+                            addUser(args[1]);
+                            MessageSending.sendMessageWithPrefix(args[2] + " has " + getKinis(args[2]) + " total Kinis!",args[2], event);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                 }else{
                     MessageSending.sendNormalMessage("Correct Syntax: !kinis get <UserName>",event);
@@ -283,13 +282,17 @@ public class CommandKinis extends SQLiteListener {
             if(!isLocked){
                 if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                     if(args.length>=3){
-                        if(userExists(args[2])){
-                            addKinis(args[2], Integer.parseInt(args[3]));
-                            MessageSending.sendMessageWithPrefix(args[3] + " Kini's have been added to " + args[2], args[2],event);
-                        }else{
-                            addUser(args[2]);
-                            addKinis(args[2], Integer.parseInt(args[3]));
-                            MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been added to " + args[2], args[2],event);
+                        try {
+                            if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
+                                addKinis(args[2], Integer.parseInt(args[3]));
+                                MessageSending.sendMessageWithPrefix(args[3] + " Kini's have been added to " + args[2], args[2],event);
+                            }else{
+                                addUser(args[2]);
+                                addKinis(args[2], Integer.parseInt(args[3]));
+                                MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been added to " + args[2], args[2],event);
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis add <UserName> <Amount>", event);
@@ -331,11 +334,15 @@ public class CommandKinis extends SQLiteListener {
             if(!isLocked){
                 if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                     if(args.length>=2){
-                        if(!userExists(args[2])){
-                            addUser(args[2]);
-                            MessageSending.sendNormalMessage(args[2] + " has been added ", event);
-                        }else{
-                            MessageSending.sendNormalMessage("User Already Exists!", event);
+                        try {
+                            if(!existsInDatabase(db, "KINIS", args[2].toLowerCase())){
+                                addUser(args[2]);
+                                MessageSending.sendNormalMessage(args[2] + " has been added ", event);
+                            }else{
+                                MessageSending.sendNormalMessage("User Already Exists!", event);
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis adduser <UserName>", event);
@@ -349,12 +356,16 @@ public class CommandKinis extends SQLiteListener {
             if(!isLocked){
                 if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                     if(args.length>=2){
-                        if(userExists(args[2])){
+                        try {
+                            if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
 
-                            removeUser(args[2]);
-                            MessageSending.sendNormalMessage(args[2] + " has been removed ", event);
-                        }else{
-                            MessageSending.sendNormalMessage("User Doesn't Exist!", event);
+                                removeUser(args[2]);
+                                MessageSending.sendNormalMessage(args[2] + " has been removed ", event);
+                            }else{
+                                MessageSending.sendNormalMessage("User Doesn't Exist!", event);
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else{
                         MessageSending.sendNormalMessage("Correct Syntax: !kinis remove <UserName>", event);

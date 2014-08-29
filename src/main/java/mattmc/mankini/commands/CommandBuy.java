@@ -136,7 +136,7 @@ public class CommandBuy extends SQLiteListener {
     }
 
     private void addUserRank(String user, Ranks rank, MessageEvent event, boolean bcast) throws SQLException {
-        if(userExistsInDB(user)){
+        if(existsInDatabase(db, "RANKS", user.toLowerCase())){
            removeUserRank(user, event, false);
             openConnection(db);
             String sql = "INSERT INTO `RANKS`(USER, RANK) VALUES(?,?)";
@@ -162,24 +162,8 @@ public class CommandBuy extends SQLiteListener {
         userCache.put(user.toLowerCase(), rank);
     }
 
-    public boolean userExistsInDB(String user) throws SQLException {
-        openConnection(db);
-        String sql = "SELECT * FROM `RANKS` WHERE `USER`=?";
-        PreparedStatement preparedStatement;
-        ResultSet resultSet;
-        preparedStatement = c.prepareStatement(sql);
-        preparedStatement.setString(1, user.toLowerCase());
-        resultSet = preparedStatement.executeQuery();
-        if (!resultSet.next())
-            return false;
-        resultSet.close();
-        preparedStatement.close();
-        closeConnection();
-        return true;
-    }
-
     private void removeUserRank(String user, MessageEvent event, boolean bcast) throws SQLException {
-        if(userExistsInDB(user)){
+        if(existsInDatabase(db, "RANKS", user.toLowerCase())){
             openConnection(db);
             String sql = "DELETE FROM `RANKS` WHERE `USER`=?";
             PreparedStatement statement = c.prepareStatement(sql);
@@ -195,21 +179,7 @@ public class CommandBuy extends SQLiteListener {
     }
 
     private Ranks getUserRank(String user) throws SQLException {
-        openConnection(db);
-        Ranks rank = null;
-        ResultSet result;
-        String sql = "SELECT * FROM `RANKS` WHERE `USER`=?";
-        PreparedStatement preparedStatement = c.prepareStatement(sql);
-        preparedStatement.setString(1, user.toLowerCase());
-        result = preparedStatement.executeQuery();
-        if(result.next()){
-            rank =  Ranks.valueOf(result.getString("RANK"));
-            userCache.put(result.getString("USER").toLowerCase(), rank);
-        }
-        closeConnection();
-        result.close();
-        preparedStatement.close();
-        return rank;
+        return userCache.get(user);
     }
 
     public enum Ranks {

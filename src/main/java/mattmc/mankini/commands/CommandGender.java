@@ -56,7 +56,11 @@ public class CommandGender extends SQLiteListener{
 
     public CommandGender(){
         setupDB();
-        getGenders();
+        try {
+            updateCache(db, "GENDER", gender, "USER", "GENDER");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -72,26 +76,6 @@ public class CommandGender extends SQLiteListener{
             e.printStackTrace();
         }finally{
             closeConnection();
-        }
-    }
-
-    private void getGenders(){
-        gender.clear();
-        openConnection(db);
-        try {
-            String sql = "SELECT * FROM `GENDER`";
-            PreparedStatement statement = c.prepareStatement(sql);
-            ResultSet set;
-            set = statement.executeQuery();
-
-            while(set.next()){
-                gender.put(set.getString("USER").toLowerCase(), set.getString("GENDER"));
-            }
-            statement.close();
-            set.close();
-            closeConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

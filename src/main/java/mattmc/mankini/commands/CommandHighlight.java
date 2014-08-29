@@ -20,7 +20,11 @@ public class CommandHighlight extends SQLiteListener {
 
     public CommandHighlight(){
         setupDB();
-        getHighlights();
+        try {
+            updateCache(db, "HIGHLIGHTS", highlights, "NAME", "URL");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public HashMap<String, String> highlights = new HashMap<String, String>();
@@ -29,10 +33,14 @@ public class CommandHighlight extends SQLiteListener {
     public void channelCommand(MessageEvent<PircBotX> event) {
         super.channelCommand(event);
         if(args.length==2){
-            if(doesHighlightExist(args[1])){
-                MessageSending.sendMessageWithPrefix(user + getHighlight(args[1]), user, event);
-            }else{
-                MessageSending.sendMessageWithPrefix(user + " that highlight doesn't exist!", user, event);
+            try {
+                if(existsInDatabase(db, "HIGHLIGHTS", args[1].toLowerCase())){
+                    MessageSending.sendMessageWithPrefix(user + getHighlight(args[1]), user, event);
+                }else{
+                    MessageSending.sendMessageWithPrefix(user + " that highlight doesn't exist!", user, event);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         if(args.length > 2){
@@ -66,68 +74,27 @@ public class CommandHighlight extends SQLiteListener {
     }
 
     public void removeHighlight(String name){
-        if(doesHighlightExist(name)){
-            openConnection(db);
-            String sql = "DELETE FROM `HIGHLIGHTS` WHERE `NAME`=?";
-            try{
-                PreparedStatement statement = c.prepareStatement(sql);
-                statement.setString(1, name.toLowerCase());
-                statement.executeUpdate();
-            }catch(Exception e){
-                e.printStackTrace();
+        try {
+            if(existsInDatabase(db, "HIGHLIGHTS", name.toLowerCase())){
+                openConnection(db);
+                String sql = "DELETE FROM `HIGHLIGHTS` WHERE `NAME`=?";
+                try{
+                    PreparedStatement statement = c.prepareStatement(sql);
+                    statement.setString(1, name.toLowerCase());
+                    statement.executeUpdate();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         closeConnection();
         highlights.remove(name);
     }
 
-    public boolean doesHighlightExist(String name){
-        try{
-            openConnection(db);
-            String sql = "SELECT * FROM `HIGHLIGHTS` WHERE `NAME`=?";
-            PreparedStatement preparedStatement;
-            ResultSet resultSet;
-            preparedStatement = c.prepareStatement(sql);
-            preparedStatement.setString(1, name.toLowerCase());
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next())
-                return true;
-            resultSet.close();
-            preparedStatement.close();
-            closeConnection();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public String getHighlight(String name){
-        String url = null;
-        url=highlights.get(name);
-        return " here you go, " + url + " have fun laughing :D";
-    }
-
-    public void getHighlights(){
-        String url = "Not Found";
-        String name = null;
-        openConnection(db);
-        try{
-            ResultSet result;
-            String sql = "SELECT * FROM `HIGHLIGHTS`";
-            PreparedStatement preparedStatement = c.prepareStatement(sql);
-            result = preparedStatement.executeQuery();
-            while(result.next()){
-                url = result.getString("URL");
-                name = result.getString("NAME");
-                highlights.put(name, url);
-            }
-            closeConnection();
-            result.close();
-            preparedStatement.close();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
+        return " here you go, " + highlights.get(name) + " have fun laughing :D";
     }
 
     @Override

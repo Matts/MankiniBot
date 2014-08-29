@@ -3,11 +3,11 @@ package mattmc.mankini.utils;
 import mattmc.mankini.MankiniBot;
 import mattmc.mankini.commands.CommandBase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Project MankiniBot
@@ -43,6 +43,39 @@ public abstract class SQLiteListener extends CommandBase {
         }
     }
 
+    public boolean existsInDatabase(String SQLiteDB, String tableToLookIn, Object thingToBeChecked) throws SQLException {
+        openConnection(SQLiteDB);
+        String sql = "SELECT * FROM `"+tableToLookIn+"` WHERE `USER`=?";
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
+        preparedStatement = c.prepareStatement(sql);
+        preparedStatement.setObject(1, thingToBeChecked);
+        resultSet = preparedStatement.executeQuery();
+        if (!resultSet.next())
+            return false;
+        resultSet.close();
+        preparedStatement.close();
+        closeConnection();
+        return true;
+    }
+
+    public void updateCache(String db, String table, HashMap list, String key, String value) throws SQLException {
+        openConnection(db);
+        try{
+            ResultSet result;
+            String sql = "SELECT * FROM `"+table+"`";
+            PreparedStatement preparedStatement = c.prepareStatement(sql);
+            result = preparedStatement.executeQuery();
+            while(result.next()){
+                list.put(result.getString(key), result.getString(value));
+            }
+            closeConnection();
+            result.close();
+            preparedStatement.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public void closeConnection(){
         try {

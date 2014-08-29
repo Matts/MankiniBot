@@ -9,6 +9,7 @@ import mattmc.mankini.common.StreamingCommon;
 import mattmc.mankini.common.ViewerCommon;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.Permissions;
+import mattmc.mankini.utils.SQLiteListener;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -23,7 +24,7 @@ public class Hooks extends ListenerAdapter<PircBotX> {
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
 
-        if(!CommandKinis.class.newInstance().userExists(event.getUser().getNick())){
+        if(!CommandKinis.class.newInstance().existsInDatabase("database\\kinis.db", "KINIS", event.getUser().getNick().toLowerCase())){
             CommandKinis.class.newInstance().addUser(event.getUser().getNick());
         }
 
