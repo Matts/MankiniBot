@@ -97,4 +97,10 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " The Result Is " +  new Evaluator().evaluate(event.getMessage().substring(event.getMessage().split(" ")[1].length()+1)), event.getUser().getNick(), event);
         }
     }
+
+    @Override
+    public void onSetChannelBan(SetChannelBanEvent<PircBotX> event) throws Exception {
+        super.onSetChannelBan(event);
+        event.getChannel().send().message(event.getHostmask() + " You Have Been A Bad Boy! GTFO!");
+    }
 }

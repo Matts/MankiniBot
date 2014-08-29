@@ -1,6 +1,7 @@
 package mattmc.mankini.commands;
 
 import mattmc.mankini.utils.MessageSending;
+import mattmc.mankini.utils.Permissions;
 import org.mozilla.javascript.ClassShutter;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -17,14 +18,16 @@ public class CommandJS extends CommandBase {
     public static boolean isActive;
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) {
+        super.channelCommand(event);
         String var = "";
         for(int i=1;i<event.getMessage().split(" ").length; i++){
-            if(event.getMessage().split(" ")[i]!="null"){
-                var+=event.getMessage().split(" ")[i] + " ";
+            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(event.getMessage().split(" ")[i]!="null"){
+                    var+=event.getMessage().split(" ")[i] + " ";
+                }
             }
         }
-        System.out.println(var);
-            MessageSending.sendNormalMessage(executeJavaScript(var), event);
+        MessageSending.sendNormalMessage(executeJavaScript(var), event);
     }
 
     public String executeJavaScript(String script)
@@ -33,15 +36,14 @@ public class CommandJS extends CommandBase {
         Context cx = Context.enter();
         cx.setClassShutter(new ClassShutter() {
             public boolean visibleToScripts(String className) {
-                if(className.startsWith("adapter"))
-                    return true;
-                return false;
+                return className.startsWith("adapter");
             }
         });
         Scriptable scope = cx.initStandardObjects();
         Object result = cx.evaluateString(scope, script, "<cmd>", 1, null);
-        return (String)result;
+        return result.toString();
         }catch(Exception e){
+            e.printStackTrace();
             return e.getMessage();
         } finally {
             Context.exit();

@@ -7,6 +7,7 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -29,25 +30,31 @@ public class Commands extends ListenerAdapter<PircBotX> {
         commands.put("rank", new CommandBuy());
         commands.put("highlight", new CommandHighlight());
         commands.put("js", new CommandJS());
+        commands.put("gender", new CommandGender());
     }
+
+    ArrayList<String> disabledCommands = new ArrayList<String>();
 
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         if(event.getMessage().startsWith("!")){
             //NOTE: The isActive Is Reversed
-            if(!commands.get(event.getMessage().split(" ")[0]).isActive){
                 if(commands.containsKey(event.getMessage().substring(1).split(" ")[0])){
-                    commands.get(event.getMessage().substring(1).split(" ")[0]).channelCommand(event);
+                    if(!disabledCommands.contains(event.getMessage().substring(1).split(" ")[0])){
+                        commands.get(event.getMessage().substring(1).split(" ")[0]).channelCommand(event);
+                    }
                 }
-            }
-            if(event.getMessage().split(" ")[0].equalsIgnoreCase("!module")){
+            if(event.getMessage().split(" ")[0].equalsIgnoreCase("!toggle")){
                 if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                     String command = event.getMessage().split(" ")[1];
-                    commands.get(command).isActive = (!commands.get(command).isActive);
-                    if(commands.get(command).isActive){
-                        MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " +  event.getMessage().split(" ")[1] + " is now disabled.", event.getUser().getNick(), event);
-                    }else{
-                        MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " +  event.getMessage().split(" ")[1] + " is now enabled.", event.getUser().getNick(), event);
+                    if(commands.containsKey(command.toLowerCase())){
+                        if(disabledCommands.contains(command.toLowerCase())){
+                            disabledCommands.remove(command.toLowerCase());
+                            MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " + command + " has been enabled.", event.getUser().getNick(), event);
+                        }else{
+                            disabledCommands.add(command.toLowerCase());
+                            MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " + command + " has been disabled.", event.getUser().getNick(), event);
+                        }
                     }
                 }
             }

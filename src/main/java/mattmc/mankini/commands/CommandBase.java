@@ -13,7 +13,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 public abstract class CommandBase {
     public CommandBase(){}
 
-    public static boolean isActive;
+    public boolean isActive;
 
     public String message;
     public String command;

@@ -84,10 +84,11 @@ public class CommandRegular extends SQLiteListener {
             statement.close();
             closeConnection();
             MessageSending.sendMessageWithPrefix(user + " is now regular!", user, event);
+            regCache.add(user);
         }else{
             MessageSending.sendMessageWithPrefix(user + " is already regular!", user, event);
         }
-        regCache.add(user);
+
     }
 
     public void removeRegular(String user, MessageEvent<PircBotX> event) throws SQLException {
@@ -98,11 +99,11 @@ public class CommandRegular extends SQLiteListener {
             statement.setString(1, user.toLowerCase());
             statement.executeUpdate();
             MessageSending.sendMessageWithPrefix(user + " is removed from the regular list!", user, event);
+            regCache.remove(user);
         }else{
             MessageSending.sendMessageWithPrefix(user + " wasn't regular in the first place!", user, event);
         }
         closeConnection();
-        regCache.remove(user);
     }
 
     public boolean isRegular(String user) throws SQLException {
@@ -119,7 +120,7 @@ public class CommandRegular extends SQLiteListener {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                }else if(args[1].equalsIgnoreCase("del")){
+                }else if(args[1].equalsIgnoreCase("del") || args[1].equalsIgnoreCase("remove")){
                     try {
                         removeRegular(args[2], event);
                     } catch (SQLException e) {
