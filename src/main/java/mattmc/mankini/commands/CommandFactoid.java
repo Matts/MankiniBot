@@ -91,12 +91,12 @@ public class CommandFactoid extends SQLiteListener
             if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
                 if(message.length() >= 3){
                     try{
-                        if(existsInDatabase(db, "FACTOIDS", args[2].toLowerCase())){
+                        //if(existsInDatabase(db, "FACTOIDS", args[2].toLowerCase())){
                             removeCommand(args[2]);
                             MessageSending.sendNormalMessage("Successfully Removed Command!", event);
-                        }else{
-                            MessageSending.sendMessageWithPrefix(user + " That Command Doesn't Exist!", user, event);
-                        }
+                        //}else{
+                        //    MessageSending.sendMessageWithPrefix(user + " That Command Doesn't Exist!", user, event);
+                        //}
                     }catch(SQLException e){
                         MessageSending.sendNormalMessage(Colors.RED + e.getMessage(), event);
                     }
@@ -124,7 +124,7 @@ public class CommandFactoid extends SQLiteListener
     }
 
     public String getOutput(String command) throws SQLException {
-        if(existsInDatabase(db, "FACTOIDS", command.toLowerCase())){
+        //if(existsInDatabase(db, "FACTOIDS", command.toLowerCase())){
             ResultSet result;
             openConnection(db);
             String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
@@ -134,12 +134,12 @@ public class CommandFactoid extends SQLiteListener
             if(result.next())
                 return result.getString("OUTPUT");
             closeConnection();
-        }
+        //}
         return command;
     }
 
     public String getPermission(String command) throws SQLException {
-        if(existsInDatabase(db, "FACTOIDS", command.toLowerCase())){
+        //if(existsInDatabase(db, "FACTOIDS", command.toLowerCase())){
             ResultSet result;
             openConnection(db);
             String sql = "SELECT * FROM `FACTOIDS` WHERE `COMMAND`=?";
@@ -150,7 +150,7 @@ public class CommandFactoid extends SQLiteListener
                 return result.getString("PERM");
             }
             closeConnection();
-        }
+        //}
         return command;
     }
 
