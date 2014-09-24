@@ -1,9 +1,12 @@
 package mattmc.mankini.utils;
 
-import mattmc.mankini.MankiniBot;
+import mattmc.mankini.commands.CommandLinks;
 import mattmc.mankini.commands.CommandRegular;
 import mattmc.mankini.common.ModCommon;
+import mattmc.mankini.libs.Strings;
 import org.pircbotx.hooks.events.MessageEvent;
+
+import java.sql.SQLException;
 
 /**
  * Project MankiniBot
@@ -11,43 +14,56 @@ import org.pircbotx.hooks.events.MessageEvent;
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class Permissions {
-    public static Perms getPermission(String user, Perms permToCheckFor, MessageEvent event, boolean bcast){
-        user=user.toLowerCase();
-        if(user.equalsIgnoreCase(MankiniBot.Owner)){
-            if(permToCheckFor==Perms.MOD){
-                return Perms.MOD;
-            }else if(permToCheckFor==Perms.REG){
-                return Perms.REG;
-            }else if(permToCheckFor==Perms.ALL){
-                return Perms.ALL;
-            }
+    public static boolean isOwner(String user, MessageEvent event) {
+        //TODO: Remove Matts Testing Override
+        if (user.equals("runew0lf") || user.equalsIgnoreCase("MattMc")) {
+            return true;
+        } else {
+            noPermissionMessage(user, event);
         }
-
-        try {
-            if(permToCheckFor.equals(Perms.REG)) {
-                if(CommandRegular.class.newInstance().isRegular(user) || ModCommon.moderators.contains(user)){
-                    return Perms.REG;
-                }else{
-                    if(bcast){
-                        MessageSending.sendMessageWithPrefix(user + "You Do Not Have Permissions To Do That", user, event);
-                    }
-                }
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        if(permToCheckFor.equals(Perms.MOD)) {
-            if(ModCommon.moderators.contains(user)){
-                return Perms.MOD;
-            }else{
-                if(bcast){
-                    MessageSending.sendMessageWithPrefix(user + " You Do Not Have Permissions To Do That", user, event);
-                }
-            }
-        }
-        return Perms.ALL;
+        return false;
     }
-    public enum Perms {
-        ALL, MOD, REG
+
+    public static boolean isModerator(String user, MessageEvent event) {
+        if (ModCommon.moderators.contains(user.toLowerCase()) || isOwner(user, event)) {
+            return true;
+        } else {
+            noPermissionMessage(user, event);
+        }
+        return false;
+    }
+
+    public static boolean isRegular(String user, MessageEvent event) throws IllegalAccessException, InstantiationException, SQLException {
+        if (CommandRegular.class.newInstance().isRegular(user) || isModerator(user, event) || isOwner(user, event)) {
+            return true;
+        } else {
+            noPermissionMessage(user, event);
+        }
+        return false;
+    }
+
+    public static boolean isPermitted(String user, MessageEvent event) throws IllegalAccessException, SQLException, InstantiationException {
+        if (CommandLinks.permitted.contains(user) || isRegular(user,event)) {
+            return true;
+        } else {
+            if (!CommandLinks.strike1.contains(user)) {
+                event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName() + " :.timeout " + event.getUser().getNick() + " 5");
+                event.respond(Strings.strike1);
+                CommandLinks.strike1.add(user);
+
+            } else {
+                if (CommandLinks.strike1.contains(user)) {
+                    event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName() + " :.timeout " + event.getUser()
+                            .getNick() + Strings.bantime);
+                    event.respond(Strings.strike2 + Strings.bantimeOnMSG);
+                    CommandLinks.strike1.remove(user);
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void noPermissionMessage(String user, MessageEvent event) {
+        MessageSending.sendMessageWithPrefix(user + " You Do Not Have Permissions To Do That", user, event);
     }
 }

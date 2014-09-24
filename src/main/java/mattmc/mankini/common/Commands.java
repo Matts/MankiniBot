@@ -29,8 +29,6 @@ public class Commands extends ListenerAdapter<PircBotX> {
         commands.put("reg", new CommandRegular());
         commands.put("rank", new CommandBuy());
         commands.put("highlight", new CommandHighlight());
-        commands.put("js", new CommandJS());
-        commands.put("gender", new CommandGender());
     }
 
     ArrayList<String> disabledCommands = new ArrayList<String>();
@@ -45,7 +43,7 @@ public class Commands extends ListenerAdapter<PircBotX> {
                     }
                 }
             if(event.getMessage().split(" ")[0].equalsIgnoreCase("!toggle")){
-                if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isModerator(event.getUser().getNick(), event)){
                     String command = event.getMessage().split(" ")[1];
                     if(commands.containsKey(command.toLowerCase())){
                         if(disabledCommands.contains(command.toLowerCase())){
@@ -56,6 +54,12 @@ public class Commands extends ListenerAdapter<PircBotX> {
                             MessageSending.sendMessageWithPrefix(event.getUser().getNick() + " " + command + " has been disabled.", event.getUser().getNick(), event);
                         }
                     }
+                }
+            }
+            if(event.getMessage().split(" ")[0].equalsIgnoreCase("!?")){
+                System.out.println(event.getMessage().split(" ")[1].toLowerCase());
+                if(commands.containsKey(event.getMessage().split(" ")[1].toLowerCase())){
+                    MessageSending.sendMessageWithPrefix(commands.get(event.getMessage().split(" ")[1].toLowerCase()).getSyntax(), event.getUser().getNick(), event);
                 }
             }
         }

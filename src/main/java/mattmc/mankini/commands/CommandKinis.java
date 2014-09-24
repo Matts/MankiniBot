@@ -167,7 +167,6 @@ public class CommandKinis extends SQLiteListener {
             int oldAmount = getKinis(user.toLowerCase());
             int newAmount = oldAmount+amount;
             openConnection(db);
-                    System.out.println(newAmount);
             String sql = "UPDATE `KINIS` SET `AMOUNT`=? WHERE `USER`=?";
             PreparedStatement statement = c.prepareStatement(sql);
             statement.setInt(1, newAmount);
@@ -224,7 +223,7 @@ public class CommandKinis extends SQLiteListener {
     }
 
     @Override
-    public void channelCommand(MessageEvent<PircBotX> event) {
+    public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
             if(args.length<=1){
                 if(!isLocked){
@@ -259,28 +258,30 @@ public class CommandKinis extends SQLiteListener {
             }
         }
         if(args[1].equalsIgnoreCase("get")){
-            if(!isLocked){
-                if(args.length >= 2){
-                    try {
-                        if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
-                           MessageSending.sendMessageWithPrefix(args[2] +  " has " + getKinis(args[2]) + " total Kinis!", args[2],  event);
-                        }else{
-                            addUser(args[1]);
-                            MessageSending.sendMessageWithPrefix(args[2] + " has " + getKinis(args[2]) + " total Kinis!",args[2], event);
+            if(!isLocked) {
+                if (Permissions.isModerator(user, event)) {
+                    if (args.length >= 2) {
+                        try {
+                            if (existsInDatabase(db, "KINIS", args[2].toLowerCase())) {
+                                MessageSending.sendMessageWithPrefix(args[2] + " has " + getKinis(args[2]) + " total Kinis!", args[2], event);
+                            } else {
+                                addUser(args[1]);
+                                MessageSending.sendMessageWithPrefix(args[2] + " has " + getKinis(args[2]) + " total Kinis!", args[2], event);
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    } else {
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis get <UserName>", event);
                     }
-                }else{
-                    MessageSending.sendNormalMessage("Correct Syntax: !kinis get <UserName>",event);
+                } else {
+                    MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
                 }
-            }else{
-                MessageSending.sendNormalMessage("A High Payload Is Getting Sent To The DB ATM, Please Wait Till Thats Complete!", event);
             }
         }
-        if(args[1].equalsIgnoreCase("add")){
+        if(args[1].equalsIgnoreCase("give")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isOwner(getNick(event), event)){
                     if(args.length>=3){
                         try {
                             if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
@@ -295,7 +296,7 @@ public class CommandKinis extends SQLiteListener {
                             e.printStackTrace();
                         }
                     }else{
-                        MessageSending.sendNormalMessage("Correct Syntax: !kinis add <UserName> <Amount>", event);
+                        MessageSending.sendNormalMessage("Correct Syntax: !kinis give <UserName> <Amount>", event);
                     }
                 }
             }else{
@@ -304,7 +305,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("rem") || args[1].equalsIgnoreCase("del")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isOwner(getNick(event), event)){
                     if(args.length>=3){
                         removeKinis(args[2].toLowerCase(), Integer.parseInt(args[3]));
                         MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been removed from " + args[2].toLowerCase(),args[2], event);
@@ -318,7 +319,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("giveall")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD) || user.equalsIgnoreCase("MattMc")){
+                if(Permissions.isOwner(getNick(event), event)){
                     if(args.length>=2){
                         allKini(Integer.parseInt(args[2]));
                         MessageSending.sendNormalMessage("Everyone got " + args[2] + " Kinis!!", event);
@@ -332,7 +333,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("adduser")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isOwner(getNick(event), event)){
                     if(args.length>=2){
                         try {
                             if(!existsInDatabase(db, "KINIS", args[2].toLowerCase())){
@@ -354,7 +355,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("removeuser")){
             if(!isLocked){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isOwner(getNick(event), event)){
                     if(args.length>=2){
                         try {
                             if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
@@ -378,7 +379,7 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("export")){
             try{
-            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase("mattsonmc")){
+                if(Permissions.isOwner(getNick(event),event)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Exporting started.. All Kini Systems Locked!", event);
                 openConnection(db);
@@ -409,7 +410,7 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("import")){
             try{
-            if(user.equalsIgnoreCase("runew0lf") ||  user.equalsIgnoreCase("mattsonmc")){
+                if(Permissions.isOwner(getNick(event),event)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
                 setupDB();
@@ -441,6 +442,10 @@ public class CommandKinis extends SQLiteListener {
             }
         }
     }
+    }
+
+    private String getNick(MessageEvent<PircBotX> event) {
+        return event.getUser().getNick();
     }
 
     private void setUserAmount(String user, int kinis) {

@@ -23,10 +23,10 @@ public class CommandFactoid extends SQLiteListener
     }
 
     @Override
-    public void channelCommand(MessageEvent<PircBotX> event) {
+    public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
         if(args[1].equalsIgnoreCase("add")){
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+            if(Permissions.isModerator(getNick(event),event)){
                 if(message.length() >= 4){
                     try{
                         int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
@@ -41,7 +41,7 @@ public class CommandFactoid extends SQLiteListener
             }
         }
         if(args[1].equalsIgnoreCase("edit")){
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+            if(Permissions.isModerator(getNick(event),event)){
                 if(message.length() >= 3){
                     try {
                         String perm;
@@ -65,7 +65,7 @@ public class CommandFactoid extends SQLiteListener
             }
         }
         if(args[1].equalsIgnoreCase("editperm")){
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+            if(Permissions.isModerator(getNick(event),event)){
                 if(message.length() >= 3){
                     String perm;
                     String output;
@@ -88,7 +88,7 @@ public class CommandFactoid extends SQLiteListener
             }
         }
         if(args[1].equalsIgnoreCase("del")){
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+            if(Permissions.isModerator(getNick(event),event)){
                 if(message.length() >= 3){
                     try{
                         //if(existsInDatabase(db, "FACTOIDS", args[2].toLowerCase())){
@@ -105,6 +105,10 @@ public class CommandFactoid extends SQLiteListener
                 }
             }
         }
+    }
+
+    private String getNick(MessageEvent<PircBotX> event) {
+        return event.getUser().getNick();
     }
 
 

@@ -5,6 +5,7 @@ import mattmc.mankini.utils.Permissions;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -20,11 +21,12 @@ public class CommandLinks extends CommandBase {
     public static boolean isActive;
 
     @Override
-    public void channelCommand(MessageEvent<PircBotX> event) {
+    public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
-                permitted.add(args[1]);
+        if(Permissions.isModerator(user,event)){
+                permitted.add(args[1].toLowerCase());
                 event.respond(user + " has given permissions to post a link to " + args[1]);
+                System.out.println(permitted.get(0).toString());
         }
     }
 

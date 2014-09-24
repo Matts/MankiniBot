@@ -21,7 +21,7 @@ public class CommandRegular extends SQLiteListener {
     String db = "database\\regulars.db";
     public static boolean isActive;
 
-    ArrayList<String> regCache = new ArrayList<>();
+    public ArrayList<String> regCache = new ArrayList<>();
 
     public CommandRegular(){
         setupDB();
@@ -111,9 +111,9 @@ public class CommandRegular extends SQLiteListener {
     }
 
     @Override
-    public void channelCommand(MessageEvent<PircBotX> event) {
+    public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
-            if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+            if(Permissions.isModerator(user,event)){
                 if(args[1].equalsIgnoreCase("add")){
                     try {
                         addRegular(args[2], event);

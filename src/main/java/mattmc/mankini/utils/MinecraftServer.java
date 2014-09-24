@@ -85,7 +85,7 @@ public class MinecraftServer {
         }
 }
     public static enum Connection {
-        PLAYERS_ONLINE, SERVER_VERSION, MOTD, PING;
+        PLAYERS_ONLINE, SERVER_VERSION, MOTD, PING
     }
 }
 

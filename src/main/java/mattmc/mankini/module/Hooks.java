@@ -1,6 +1,5 @@
 package mattmc.mankini.module;
 
-import mattmc.mankini.MankiniBot;
 import mattmc.mankini.commands.CommandFactoid;
 import mattmc.mankini.commands.CommandKinis;
 import mattmc.mankini.commands.CommandLinks;
@@ -9,7 +8,6 @@ import mattmc.mankini.common.StreamingCommon;
 import mattmc.mankini.common.ViewerCommon;
 import mattmc.mankini.libs.Strings;
 import mattmc.mankini.utils.Permissions;
-import mattmc.mankini.utils.SQLiteListener;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -24,79 +22,61 @@ public class Hooks extends ListenerAdapter<PircBotX> {
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
 
-        if(!CommandKinis.class.newInstance().existsInDatabase("database\\kinis.db", "KINIS", event.getUser().getNick().toLowerCase())){
+        if (!CommandKinis.class.newInstance().existsInDatabase("database\\kinis.db", "KINIS", event.getUser().getNick().toLowerCase())) {
             CommandKinis.class.newInstance().addUser(event.getUser().getNick());
         }
 
         String command = event.getMessage().split(" ")[0];
-        if(command.startsWith("!")){
+        if (command.startsWith("!")) {
             String output = CommandFactoid.class.newInstance().getOutput(event.getMessage().split(" ")[0].substring(1));
-            if(output.contains("%r")){
-                if(event.getMessage().split(" ").length>1){
+            if (output.contains("%r")) {
+                if (event.getMessage().split(" ").length > 1) {
                     output = output.replaceAll("%r", event.getMessage().split(" ")[1]);
                 }
             }
-            if(output.contains("%s")){
-                if(event.getMessage().split(" ").length>2){
+            if (output.contains("%s")) {
+                if (event.getMessage().split(" ").length > 2) {
                     output = output.replaceAll("%s", event.getMessage().split(" ")[2]);
                 }
             }
-            if(!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")){
-                if(!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")){
-                    if(CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")){
-                        if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+            if (!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")) {
+                if (!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")) {
+                    if (CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")) {
+                        if (Permissions.isModerator(event.getUser().getNick(), event)) {
                             event.getChannel().send().message(output);
                         }
                     }
-                }else{
-                    if(Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event, true).equals(Permissions.Perms.REG)){
+                } else {
+                    if (Permissions.isRegular(event.getUser().getNick(), event)) {
                         event.getChannel().send().message(output);
                     }
                 }
-            }else{
+            } else {
                 event.getChannel().send().message(output);
             }
         }
         /**
          * Links Hook
          */
-        if(event.getMessage().contains("http") || event.getMessage().contains("www.") || event.getMessage().contains(".com")
+        if (event.getMessage().contains("http") || event.getMessage().contains("www.") || event.getMessage().contains(".com")
                 || event.getMessage().contains(".net") || event.getMessage().contains(".co") ||
-                event.getMessage().contains(".co.uk")){
-            if(!Permissions.getPermission(event.getUser().getNick(), Permissions.Perms.REG, event,false).equals(Permissions.Perms.REG)){
-                if(!CommandLinks.permitted.contains(event.getUser().getNick())){
-                    if(!(ModCommon.moderators.contains(event.getUser().getNick()))){
-                            if(!CommandLinks.strike1.contains(event.getUser().getNick())){
-                                event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName()
-                                        +" :.timeout "+ event.getUser().getNick() + " 5");
-                                event.respond(Strings.strike1);
-                                CommandLinks.strike1.add(event.getUser().getNick());
+                event.getMessage().contains(".co.uk") || event.getMessage().contains(".org")) {
 
-                            }else{
-                                if(CommandLinks.strike1.contains(event.getUser().getNick())){
-                                    event.getBot().sendRaw().rawLine("PRIVMSG " + event.getChannel().getName() +" :.timeout "+ event.getUser()
-                                            .getNick() + Strings.bantime);
-                                    event.respond(Strings.strike2 + Strings.bantimeOnMSG);
-                                    CommandLinks.strike1.remove(event.getUser().getNick());
-                                }
-                            }
-
-                    }
-                }
+            if (Permissions.isPermitted(event.getUser().getNick(), event)) {
+                CommandLinks.permitted.remove(event.getUser().getNick().toLowerCase());
             }
-            CommandLinks.permitted.remove(event.getUser().getNick());
         }
 
-        if(CommandKinis.kinis.getState().equals(Thread.State.NEW)){
+        if (CommandKinis.kinis.getState().equals(Thread.State.NEW)) {
             CommandKinis.kinis.start();
         }
-        if(ViewerCommon.updateViewers.getState().equals(Thread.State.NEW)){
+        if (ViewerCommon.updateViewers.getState().equals(Thread.State.NEW)) {
             ViewerCommon.updateViewers.start();
         }
-        if(ModCommon.updateMods.getState().equals(Thread.State.NEW)){
+        if (ModCommon.updateMods.getState().equals(Thread.State.NEW)) {
             ModCommon.updateMods.start();
         }
-        if(StreamingCommon.checkIfOnline.getState().equals(Thread.State.NEW)){
+        if (StreamingCommon.checkIfOnline.getState().equals(Thread.State.NEW)) {
             StreamingCommon.checkIfOnline.start();
         }
 

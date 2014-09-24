@@ -20,7 +20,7 @@ public class ViewerCommon {
             while(true){
                 try {
                     updateViewers();
-                    updateViewers.sleep(180000);
+                    sleep(180000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -6,7 +6,7 @@
 
     <groupId>Mankini</groupId>
     <artifactId>Mankini</artifactId>
-    <version>V2.1-Pre</version>
+    <version>V2.2</version>
     <build>
         <plugins>
             <plugin>

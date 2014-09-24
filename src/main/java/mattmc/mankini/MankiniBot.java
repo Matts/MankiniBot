@@ -15,7 +15,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -27,7 +26,7 @@ import java.util.Scanner;
 
 public class MankiniBot {
 
-    public static final String VERSION = "V2.1-Pre";
+    public static final String VERSION = "V2.2";
     public static boolean runGUI = true;
 
     public static Logger logger = LoggerFactory.getLogger(MankiniBot.class);
@@ -45,10 +44,10 @@ public class MankiniBot {
         
         new MankiniBot();
     }
-    public static String Owner = "MattMc";
 
     static File serverConfig = new File("config/server.yml");
     static File stringsFile = new File("config/strings.yml");
+
     public static void setupDefaultConfigs(){
         try{
             File f = new File("database");
@@ -59,26 +58,20 @@ public class MankiniBot {
             e.printStackTrace();
         }
 
+        CheckStrings();
 
-        if(!stringsFile.exists()){
-            try {
-                stringsFile.createNewFile();
-                System.out.println(MankiniBot.class.getPackage());
-                Scanner scanner = new Scanner(MankiniBot.class.getResourceAsStream(
-                        "./defaultStrings.yml"));
-                FileWriter fileWriter = new FileWriter(stringsFile);
-                while (scanner.hasNextLine()) {
-                    fileWriter.write(scanner.nextLine() + '\n');
-                }
-                fileWriter.close();
-                scanner.close();
-                logger.info("Finished writing strings");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        CheckServer();
+
+        try {
+            conf = (Map<String, Object>) yaml.load(new FileInputStream(
+                    serverConfig));
+            strings = (Map<String, Object>) yaml.load(new FileInputStream(stringsFile));
+        } catch (FileNotFoundException e) {
+            logger.info(e.getMessage());
         }
+    }
 
-
+    private static void CheckServer() {
         if(!serverConfig.exists()){
             logger.info("First Time Config Setup, Please edit the config after it got written...");
             try {
@@ -96,18 +89,30 @@ public class MankiniBot {
                 e.printStackTrace();
             }
         }
+    }
 
-        try {
-            conf = (Map<String, Object>) yaml.load(new FileInputStream(
-                    serverConfig));
-            strings = (Map<String, Object>) yaml.load(new FileInputStream(stringsFile));
-        } catch (FileNotFoundException e) {
-            logger.info(e.getMessage());
+    private static void CheckStrings() {
+        if(!stringsFile.exists()){
+            try {
+                stringsFile.createNewFile();
+                System.out.println(MankiniBot.class.getPackage());
+                Scanner scanner = new Scanner(MankiniBot.class.getResourceAsStream(
+                        "./defaultStrings.yml"));
+                FileWriter fileWriter = new FileWriter(stringsFile);
+                while (scanner.hasNextLine()) {
+                    fileWriter.write(scanner.nextLine() + '\n');
+                }
+                fileWriter.close();
+                scanner.close();
+                logger.info("Finished writing strings");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
 
-        Configuration<PircBotX> server = new Configuration.Builder()
+    Configuration server = new Configuration.Builder()
                 .setEncoding(Charset.forName("UTF8"))
 
                 .setName((String) conf.get("nick"))

@@ -7,6 +7,7 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.Random;
 
 /**
@@ -19,17 +20,17 @@ public class CommandQuote extends CommandBase {
     public static boolean isActive;
 
     @Override
-    public void channelCommand(MessageEvent<PircBotX> event) {
+    public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
         if(command.equalsIgnoreCase("!quote")){
             if(args.length==1){
-                if(Permissions.getPermission(user, Permissions.Perms.REG, event, true).equals(Permissions.Perms.REG)){
+                if(Permissions.isRegular(user,event)){
                     pickRandomQuote(event);
                 }
             }
             if(args.length>=2){
                 if(args[1].equalsIgnoreCase("add")){
-                    if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                    if(Permissions.isModerator(user,event)){
                         addQuote(message.substring(11, message.length()), event);
                     }
                 }

@@ -20,7 +20,7 @@ public class ModCommon {
             while(true){
                 try {
                     updateModerators();
-                    updateMods.sleep(300000);
+                    sleep(300000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -30,7 +30,7 @@ public class CommandHighlight extends SQLiteListener {
     public HashMap<String, String> highlights = new HashMap<String, String>();
 
     @Override
-    public void channelCommand(MessageEvent<PircBotX> event) {
+    public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
         if(args.length==2){
             try {
@@ -45,16 +45,20 @@ public class CommandHighlight extends SQLiteListener {
         }
         if(args.length > 2){
             if(args[1].equalsIgnoreCase("add")){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isModerator(getNick(event),event)){
                     addHighlight(args[2], args[3]);
                 }
             }
             if(args[1].equalsIgnoreCase("remove")||args[1].equalsIgnoreCase("del")){
-                if(Permissions.getPermission(user, Permissions.Perms.MOD, event, true).equals(Permissions.Perms.MOD)){
+                if(Permissions.isModerator(getNick(event),event)){
                     removeHighlight(args[2]);
                 }
             }
         }
+    }
+
+    private String getNick(MessageEvent<PircBotX> event) {
+        return event.getUser().getNick();
     }
 
     public void addHighlight(String name, String url){

@@ -16,7 +16,7 @@ public class ModuleSendMessages extends ListenerAdapter<PircBotX> {
     private static MessageEvent event;
     @Override
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
-        this.event = event;
+        ModuleSendMessages.event = event;
         if(ModuleSendMessages.sendMessage.getState().equals(Thread.State.NEW)){
             ModuleSendMessages.sendMessage.start();
         }
@@ -29,7 +29,7 @@ public class ModuleSendMessages extends ListenerAdapter<PircBotX> {
                 if(StreamingCommon.isStreaming){
                 try {
                     event.getChannel().send().message(Strings.sendMessage);
-                    sendMessage.sleep(60000*Strings.sendMessageSleepTime);
+                    sleep(60000 * Strings.sendMessageSleepTime);
                         } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
