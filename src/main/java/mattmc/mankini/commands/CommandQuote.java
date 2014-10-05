@@ -24,13 +24,13 @@ public class CommandQuote extends CommandBase {
         super.channelCommand(event);
         if(command.equalsIgnoreCase("!quote")){
             if(args.length==1){
-                if(Permissions.isRegular(user,event)){
+                if(Permissions.isRegular(user,event, true)){
                     pickRandomQuote(event);
                 }
             }
             if(args.length>=2){
                 if(args[1].equalsIgnoreCase("add")){
-                    if(Permissions.isModerator(user,event)){
+                    if(Permissions.isModerator(user,event, true)){
                         addQuote(message.substring(11, message.length()), event);
                     }
                 }

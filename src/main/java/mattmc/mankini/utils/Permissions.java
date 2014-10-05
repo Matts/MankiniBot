@@ -14,36 +14,36 @@ import java.sql.SQLException;
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  */
 public class Permissions {
-    public static boolean isOwner(String user, MessageEvent event) {
+    public static boolean isOwner(String user, MessageEvent event, boolean bcast) {
         //TODO: Remove Matts Testing Override
         if (user.equals("runew0lf") || user.equalsIgnoreCase("MattMc")) {
             return true;
         } else {
-            noPermissionMessage(user, event);
+            noPermissionMessage(user, event, bcast);
         }
         return false;
     }
 
-    public static boolean isModerator(String user, MessageEvent event) {
-        if (ModCommon.moderators.contains(user.toLowerCase()) || isOwner(user, event)) {
+    public static boolean isModerator(String user, MessageEvent event, boolean bcast) {
+        if (ModCommon.moderators.contains(user.toLowerCase()) || isOwner(user, event, bcast)) {
             return true;
         } else {
-            noPermissionMessage(user, event);
+            noPermissionMessage(user, event, bcast);
         }
         return false;
     }
 
-    public static boolean isRegular(String user, MessageEvent event) throws IllegalAccessException, InstantiationException, SQLException {
-        if (CommandRegular.class.newInstance().isRegular(user) || isModerator(user, event) || isOwner(user, event)) {
+    public static boolean isRegular(String user, MessageEvent event, boolean bcast) throws IllegalAccessException, InstantiationException, SQLException {
+        if (CommandRegular.class.newInstance().isRegular(user) || isModerator(user, event, bcast) || isOwner(user, event, bcast)) {
             return true;
         } else {
-            noPermissionMessage(user, event);
+            noPermissionMessage(user, event, bcast);
         }
         return false;
     }
 
     public static boolean isPermitted(String user, MessageEvent event) throws IllegalAccessException, SQLException, InstantiationException {
-        if (CommandLinks.permitted.contains(user) || isRegular(user,event)) {
+        if (CommandLinks.permitted.contains(user) || isRegular(user,event,false)) {
             return true;
         } else {
             if (!CommandLinks.strike1.contains(user)) {
@@ -63,7 +63,9 @@ public class Permissions {
         return false;
     }
 
-    public static void noPermissionMessage(String user, MessageEvent event) {
-        MessageSending.sendMessageWithPrefix(user + " You Do Not Have Permissions To Do That", user, event);
+    public static void noPermissionMessage(String user, MessageEvent event, boolean bcast) {
+        if(bcast){
+            MessageSending.sendMessageWithPrefix(user + " You Do Not Have Permissions To Do That", user, event);
+        }
     }
 }

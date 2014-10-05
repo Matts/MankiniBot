@@ -113,7 +113,7 @@ public class CommandRegular extends SQLiteListener {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
-            if(Permissions.isModerator(user,event)){
+            if(Permissions.isModerator(user,event, true)){
                 if(args[1].equalsIgnoreCase("add")){
                     try {
                         addRegular(args[2], event);

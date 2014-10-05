@@ -26,7 +26,7 @@ public class CommandFactoid extends SQLiteListener
     public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
         if(args[1].equalsIgnoreCase("add")){
-            if(Permissions.isModerator(getNick(event),event)){
+            if(Permissions.isModerator(getNick(event),event, true)){
                 if(message.length() >= 4){
                     try{
                         int i = args[0].length() + args[1].length() + args[2].length() + args[3].length() + 4;
@@ -41,7 +41,7 @@ public class CommandFactoid extends SQLiteListener
             }
         }
         if(args[1].equalsIgnoreCase("edit")){
-            if(Permissions.isModerator(getNick(event),event)){
+            if(Permissions.isModerator(getNick(event),event, true)){
                 if(message.length() >= 3){
                     try {
                         String perm;
@@ -65,7 +65,7 @@ public class CommandFactoid extends SQLiteListener
             }
         }
         if(args[1].equalsIgnoreCase("editperm")){
-            if(Permissions.isModerator(getNick(event),event)){
+            if(Permissions.isModerator(getNick(event),event, true)){
                 if(message.length() >= 3){
                     String perm;
                     String output;
@@ -88,7 +88,7 @@ public class CommandFactoid extends SQLiteListener
             }
         }
         if(args[1].equalsIgnoreCase("del")){
-            if(Permissions.isModerator(getNick(event),event)){
+            if(Permissions.isModerator(getNick(event),event, true)){
                 if(message.length() >= 3){
                     try{
                         //if(existsInDatabase(db, "FACTOIDS", args[2].toLowerCase())){

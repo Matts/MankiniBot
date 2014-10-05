@@ -45,12 +45,12 @@ public class CommandHighlight extends SQLiteListener {
         }
         if(args.length > 2){
             if(args[1].equalsIgnoreCase("add")){
-                if(Permissions.isModerator(getNick(event),event)){
+                if(Permissions.isModerator(getNick(event),event, true)){
                     addHighlight(args[2], args[3]);
                 }
             }
             if(args[1].equalsIgnoreCase("remove")||args[1].equalsIgnoreCase("del")){
-                if(Permissions.isModerator(getNick(event),event)){
+                if(Permissions.isModerator(getNick(event),event, true)){
                     removeHighlight(args[2]);
                 }
             }

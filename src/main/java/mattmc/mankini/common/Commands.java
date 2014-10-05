@@ -43,7 +43,7 @@ public class Commands extends ListenerAdapter<PircBotX> {
                     }
                 }
             if(event.getMessage().split(" ")[0].equalsIgnoreCase("!toggle")){
-                if(Permissions.isModerator(event.getUser().getNick(), event)){
+                if(Permissions.isModerator(event.getUser().getNick(), event, true)){
                     String command = event.getMessage().split(" ")[1];
                     if(commands.containsKey(command.toLowerCase())){
                         if(disabledCommands.contains(command.toLowerCase())){

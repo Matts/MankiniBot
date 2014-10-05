@@ -45,12 +45,12 @@ public class CommandBuy extends SQLiteListener {
                     buyRank(user, Ranks.valueOf(args[2].toLowerCase()), event);
                 }
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (Permissions.isModerator(getNick(event), event)) {
+                    if (Permissions.isModerator(getNick(event), event, true)) {
                         removeUserRank(args[2], event, true);
                     }
                 }
                 if (args[1].equalsIgnoreCase("add")) {
-                    if (Permissions.isModerator(getNick(event), event)) {
+                    if (Permissions.isModerator(getNick(event), event, true)) {
                         addUserRank(args[2], Ranks.valueOf(args[3]), event, true);
                     }
                 }
@@ -68,7 +68,7 @@ public class CommandBuy extends SQLiteListener {
                     MessageSending.sendMessageWithPrefix(user + " please send a email to matt@mattmc.info if you have a request or want to nerf something.", user, event);
                 }
                 if (args[1].equalsIgnoreCase("get")) {
-                    if (Permissions.isRegular(getNick(event), event)) {
+                    if (Permissions.isRegular(getNick(event), event, true)) {
                         if (CommandBuy.getUserCache().get(user.toLowerCase()) != null) {
                             MessageSending.sendMessageWithPrefix(args[2], args[2], event);
                         } else {
@@ -204,11 +204,12 @@ public class CommandBuy extends SQLiteListener {
         mankiniassasin(5000, "Kini Assassin"),
         dirtylurker(5000, "Dirty Lurker"),
         kinipimp(6000, "Kini Pimp"),
-        masterlurker(9001, "Master Lurker"),
+        masterlurker(9000, "Master Lurker"),
         mankinimaster(10000, "Mankini Master"),
         moderator(1000000, "Moderator"),
         developer(1000000, "Developer"),
-        kiniqueenie(5000, "Kini Queenie");
+        kiniqueenie(5000, "Kini Queenie"),
+        mistress(10000, "Mankini Mistress");
 
         private final Integer amount;
         private final String desc;

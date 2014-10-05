@@ -259,7 +259,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("get")){
             if(!isLocked) {
-                if (Permissions.isModerator(user, event)) {
+                if (Permissions.isModerator(user, event, true)) {
                     if (args.length >= 2) {
                         try {
                             if (existsInDatabase(db, "KINIS", args[2].toLowerCase())) {
@@ -281,7 +281,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("give")){
             if(!isLocked){
-                if(Permissions.isOwner(getNick(event), event)){
+                if(Permissions.isOwner(getNick(event), event, true)){
                     if(args.length>=3){
                         try {
                             if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
@@ -305,7 +305,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("rem") || args[1].equalsIgnoreCase("del")){
             if(!isLocked){
-                if(Permissions.isOwner(getNick(event), event)){
+                if(Permissions.isOwner(getNick(event), event, true)){
                     if(args.length>=3){
                         removeKinis(args[2].toLowerCase(), Integer.parseInt(args[3]));
                         MessageSending.sendMessageWithPrefix(args[3] + " Kinis's have been removed from " + args[2].toLowerCase(),args[2], event);
@@ -319,7 +319,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("giveall")){
             if(!isLocked){
-                if(Permissions.isOwner(getNick(event), event)){
+                if(Permissions.isOwner(getNick(event), event, true)){
                     if(args.length>=2){
                         allKini(Integer.parseInt(args[2]));
                         MessageSending.sendNormalMessage("Everyone got " + args[2] + " Kinis!!", event);
@@ -333,7 +333,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("adduser")){
             if(!isLocked){
-                if(Permissions.isOwner(getNick(event), event)){
+                if(Permissions.isOwner(getNick(event), event, true)){
                     if(args.length>=2){
                         try {
                             if(!existsInDatabase(db, "KINIS", args[2].toLowerCase())){
@@ -355,7 +355,7 @@ public class CommandKinis extends SQLiteListener {
         }
         if(args[1].equalsIgnoreCase("removeuser")){
             if(!isLocked){
-                if(Permissions.isOwner(getNick(event), event)){
+                if(Permissions.isOwner(getNick(event), event, true)){
                     if(args.length>=2){
                         try {
                             if(existsInDatabase(db, "KINIS", args[2].toLowerCase())){
@@ -379,7 +379,7 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("export")){
             try{
-                if(Permissions.isOwner(getNick(event),event)){
+                if(Permissions.isOwner(getNick(event),event, true)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Exporting started.. All Kini Systems Locked!", event);
                 openConnection(db);
@@ -410,7 +410,7 @@ public class CommandKinis extends SQLiteListener {
 
         if(args[1].equalsIgnoreCase("import")){
             try{
-                if(Permissions.isOwner(getNick(event),event)){
+                if(Permissions.isOwner(getNick(event),event, true)){
                 isLocked=true;
                 MessageSending.sendNormalMessage("Kini Importing started.. All Kini Systems Locked!", event);
                 setupDB();

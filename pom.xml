@@ -34,19 +34,9 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.mozilla</groupId>
-            <artifactId>rhino</artifactId>
-            <version>1.7R4</version>
-        </dependency>
-        <dependency>
             <groupId>net.sourceforge.jeval</groupId>
             <artifactId>jeval</artifactId>
             <version>0.9.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.luaj</groupId>
-            <artifactId>luaj-jse</artifactId>
-            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.pircbotx</groupId>

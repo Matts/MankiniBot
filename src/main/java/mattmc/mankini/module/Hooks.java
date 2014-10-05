@@ -42,12 +42,12 @@ public class Hooks extends ListenerAdapter<PircBotX> {
             if (!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("ALL")) {
                 if (!CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("REG")) {
                     if (CommandFactoid.class.newInstance().getPermission(event.getMessage().split(" ")[0].substring(1)).equalsIgnoreCase("MOD")) {
-                        if (Permissions.isModerator(event.getUser().getNick(), event)) {
+                        if (Permissions.isModerator(event.getUser().getNick(), event, true)) {
                             event.getChannel().send().message(output);
                         }
                     }
                 } else {
-                    if (Permissions.isRegular(event.getUser().getNick(), event)) {
+                    if (Permissions.isRegular(event.getUser().getNick(), event, true)) {
                         event.getChannel().send().message(output);
                     }
                 }
@@ -58,14 +58,7 @@ public class Hooks extends ListenerAdapter<PircBotX> {
         /**
          * Links Hook
          */
-        if (event.getMessage().contains("http") || event.getMessage().contains("www.") || event.getMessage().contains(".com")
-                || event.getMessage().contains(".net") || event.getMessage().contains(".co") ||
-                event.getMessage().contains(".co.uk") || event.getMessage().contains(".org")) {
-
-            if (Permissions.isPermitted(event.getUser().getNick(), event)) {
-                CommandLinks.permitted.remove(event.getUser().getNick().toLowerCase());
-            }
-        }
+        CommandLinks.sentenceContainsLink(event.getMessage().toString(), event);
 
         if (CommandKinis.kinis.getState().equals(Thread.State.NEW)) {
             CommandKinis.kinis.start();

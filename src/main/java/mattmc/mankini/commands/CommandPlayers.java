@@ -21,7 +21,7 @@ public class CommandPlayers extends CommandBase {
     @Override
     public void channelCommand(MessageEvent<PircBotX> event) throws IllegalAccessException, SQLException, InstantiationException {
         super.channelCommand(event);
-            if(Permissions.isRegular(user,event)){
+            if(Permissions.isRegular(user,event, true)){
                     MinecraftServer server = new MinecraftServer("runew0lf.com");
                     if(!server.parseData(MinecraftServer.Connection.PING).equalsIgnoreCase("Nothing Found! Please check if the server is on!")){
                         MessageSending.sendNormalMessage(server.parseData(MinecraftServer.Connection.PLAYERS_ONLINE), event);

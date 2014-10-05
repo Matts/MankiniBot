@@ -32,23 +32,23 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
     public void onMessage(MessageEvent<PircBotX> event) throws Exception {
         String message = event.getMessage().split(" ")[0];
         if (message.equalsIgnoreCase("!viewers")) {
-            if (Permissions.isRegular(getNick(event), event)) {
+            if (Permissions.isRegular(getNick(event), event, true)) {
                 JSONObject json = new JSONObject(JSONParser.readUrl("http://tmi.twitch.tv/group/user/runew0lf/chatters"));
                 MessageSending.sendNormalMessage(json.get("chatter_count") + " viewers currently watching!", event);
             }
         }
         if (message.equalsIgnoreCase("!version")) {
-            if (Permissions.isRegular(getNick(event), event)) {
+            if (Permissions.isRegular(getNick(event), event, true)) {
                 MessageSending.sendNormalMessage("MankiniBot - Current Version: " + MankiniBot.VERSION, event);
             }
         }
         if (message.equalsIgnoreCase("!updateusers")) {
-            if (Permissions.isModerator(getNick(event), event)) {
+            if (Permissions.isModerator(getNick(event), event, true)) {
                 ViewerCommon.updateViewers();
             }
         }
         if (message.equalsIgnoreCase("!updatemods")) {
-            if (Permissions.isModerator(getNick(event), event)) {
+            if (Permissions.isModerator(getNick(event), event, true)) {
                 ModCommon.updateModerators();
             }
         }
@@ -57,7 +57,7 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             MessageSending.sendNormalMessage("A list of commands is currently in the works... Please try again on a later date.", event);
         }
         if (message.equalsIgnoreCase("!togglestream")) {
-            if (Permissions.isOwner(getNick(event), event)) {
+            if (Permissions.isOwner(getNick(event), event, true)) {
                 if (StreamingCommon.isStreaming == false) {
                     MessageSending.sendMessageWithPrefix("Runew0lf has started streaming!", "runew0lf", event);
                     StreamingCommon.isStreaming = true;
@@ -73,26 +73,26 @@ public class ChannelCommands extends ListenerAdapter<PircBotX> {
             MessageSending.sendNormalMessage("༼ つ◕_◕༽つ Mankini or Riot ༼ つ◕_◕༽つ", event);
         }
         if (message.equalsIgnoreCase("!riot1")) {
-            if (Permissions.isModerator(getNick(event), event)) {
+            if (Permissions.isModerator(getNick(event), event, true)) {
                 MessageSending.sendNormalMessage("༼ つ◕_◕༽つ " + event.getMessage().split(" ")[1] + " or Riot ༼ つ◕_◕༽つ", event);
             }
         }
         if (message.equalsIgnoreCase("!raid")) {
-            if (Permissions.isModerator(getNick(event), event)) {
+            if (Permissions.isModerator(getNick(event), event, true)) {
                 MessageSending.sendNormalMessage("/me Thanks for watching! Be sure to follow if you enjoyed the stream. Hope to see you again later! Please go raid http://www.twitch.tv/" + event.getMessage().split(" ")[1] + " and say to them - Runew0lf's Mankini Raid!! ༼ つ◕_◕༽つ", event);
             }
         }
 
         //this command grabs the title and stream status
         if (message.equalsIgnoreCase("!status") || message.equalsIgnoreCase("!title") || message.equalsIgnoreCase("!game")) {
-            if (Permissions.isRegular(getNick(event), event)) {
+            if (Permissions.isRegular(getNick(event), event, true)) {
                 JSONObject json = new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/channels/runew0lf"));
                 MessageSending.sendNormalMessage("playing " + json.get("game") + ": " + json.get("status"), event);
 
             }
         }
         if (message.equalsIgnoreCase("!stats")) {
-            if (Permissions.isRegular(getNick(event), event)) {
+            if (Permissions.isRegular(getNick(event), event, true)) {
                 JSONObject json = new JSONObject(JSONParser.readUrl("https://api.twitch.tv/kraken/channels/runew0lf"));
                 MessageSending.sendNormalMessage("Since he started streaming Runew0lf has gained " + json.get("followers") + " followers, and the Channel has had " + json.get("views") + " views", event);
 
